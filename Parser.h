@@ -17,6 +17,9 @@ using namespace std;
 
 #define CAMERA "camera"
 #define SPHERE "sphere"
+#define LIGHTSOURCE "light_source"
+#define PLANE "plane"
+#define START "{"
 #define END "}"
 
 
@@ -40,6 +43,12 @@ class Parser {
                 }
                 if (w.compare(SPHERE) == 0) {
                     parseSphere();
+                }
+                if (w.compare(LIGHTSOURCE) == 0) {
+                    parseLight();
+                }
+                if (w.compare(PLANE) == 0) {
+                    parsePlance();
                 }
             }
         }
@@ -128,8 +137,77 @@ class Parser {
             scene.addSphere(sphere);
         }
 
+        void parseLight() {
+            char c;
+            string w;
+            vec3 tmp;
+            auto light = make_shared<Light>();
+
+            while (input >> c && c != '}') {
+                if (c == '{') {
+                    tmp.setX(extractDouble(w));
+                    tmp.setY(extractDouble(w));
+                    tmp.setZ(extractDouble(w));
+
+                    light->setPosition(tmp);
+                }
+
+                input >> w;
+                if (w.compare("color") == 0) {
+                    input >> w;
+                    if (w.compare("rgb") == 0) {
+                        tmp.setX(extractDouble(w));
+                        tmp.setY(extractDouble(w));
+                        tmp.setZ(extractDouble(w));
+
+                        light->setPigment(tmp);
+                        break;
+                    }
+                }
+            }
+
+            scene.addLight(light);
+        }
+
+        void parsePlance() {
+            char c;
+            string w;
+            vec3 tmp;
+            auto plane = make_shared<Plane>();
+
+            while (input >> c && c != '}') {
+                if (c == '{') {
+                    tmp.setX(extractDouble(w));
+                    tmp.setY(extractDouble(w));
+                    tmp.setZ(extractDouble(w));
+
+                    plane->setNormal(tmp);
+                    plane->setDistance(extractDouble(w));
+                }
+
+                input >> w;
+                if (w.compare("pigment") == 0) {
+                    input >> c;
+                    input >> w;
+                    if (w.compare("color") == 0) {
+                        input >> w;
+                        if (w.compare("rgb") == 0) {
+                            tmp.setX(extractDouble(w));
+                            tmp.setY(extractDouble(w));
+                            tmp.setZ(extractDouble(w));
+
+                            plane->setPigment(tmp);
+                            break;
+                        }
+                    }
+                    
+                }
+            }
+            scene.addPlane(plane);
+        }
+
         double extractDouble(string& w) {
-            regex target("([0-9]+[.]*[0-9]*)");
+            regex target("([-]*[0-9]+[.]*[0-9]*)");
             smatch match;
 
             input >> w;

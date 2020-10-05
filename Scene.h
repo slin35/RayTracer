@@ -6,6 +6,8 @@
 #include "Sphere.h"
 #include "Pigment.h"
 #include "Ray.h"
+#include "Light.h"
+#include "Plane.h"
 
 
 using namespace std;
@@ -25,13 +27,23 @@ class Scene {
             spheres.push_back(sphere);
         }
 
+        void addLight(shared_ptr<Light> light) {
+            lights.push_back(light);
+        }
+
+        void addPlane(shared_ptr<Plane> plane) {
+            planes.push_back(plane);
+        }
+
         void render(ostream& out);
 
-    private:
+    public:
         int width;
         int height;
         vector<shared_ptr<Camera>> cameras;
         vector<shared_ptr<Sphere>> spheres;
+        vector<shared_ptr<Light>> lights;
+        vector<shared_ptr<Plane>> planes;
         Pigment inside{0, 0, 0};
         Pigment outside{0.6, 0.8, 0.3};
         
