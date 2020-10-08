@@ -24,9 +24,27 @@ class Sphere : public Object {
         double getRadius() const { return radius; }
         Pigment getpigment() const { return pigment; }
 
+        virtual double hit(Ray ray);
+
     private:
         vec3 center;
         double radius = 0;
         Pigment pigment{0.0f, 0.0f, 0.0f};
 
 };
+
+double Sphere::hit(Ray ray) {
+    vec3 e = ray.position;
+    vec3 c = center;
+    vec3 d = ray.direction;
+    double r = radius;
+    double discriminant = pow(d.dot(e - c),2) - d.dot(d) * ((e - c).dot(e - c) - pow(r, 2));
+
+    if (discriminant < 0)
+        return -1;
+
+    double t1 = d.dot(e - c) * -1 + sqrt(discriminant) / d.dot(d);
+	double t2 = d.dot(e - c) * -1 - sqrt(discriminant) / d.dot(d);
+
+    return t1 < t2 ? t1 : t2;
+}

@@ -2,12 +2,11 @@
 
 #include <vector>
 
-#include "Object.h"
 #include "vec3.h"
 
 using namespace std;
 
-class Camera : public Object {
+class Camera {
     public:
         Camera() {}
 

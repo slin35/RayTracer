@@ -9,6 +9,7 @@
 #include "Light.h"
 #include "Plane.h"
 #include "Util.h"
+#include "Object.h"
 
 #define N 1
 
@@ -28,6 +29,7 @@ class Scene {
 
         void addSphere(shared_ptr<Sphere> sphere) {
             spheres.push_back(sphere);
+            objects.push_back(sphere);
         }
 
         void addLight(shared_ptr<Light> light) {
@@ -36,6 +38,7 @@ class Scene {
 
         void addPlane(shared_ptr<Plane> plane) {
             planes.push_back(plane);
+            objects.push_back(plane);
         }
 
         void render(ostream& out);
@@ -48,6 +51,7 @@ class Scene {
         vector<shared_ptr<Sphere>> spheres;
         vector<shared_ptr<Light>> lights;
         vector<shared_ptr<Plane>> planes;
+        vector<shared_ptr<Object>> objects;
         Pigment inside{0, 0, 0};
         Pigment outside{0.6, 0.8, 0.3};
         
@@ -69,9 +73,22 @@ void Scene::render(ostream& out) {
 
             for (int i = 0; i < N; i++) {
                 ray = Ray(cameras[0], x + Util::randD(-0.5), y + Util::randD(-0.5), width, height);
-                for (auto sphere : spheres) {
-                    res = ray.hit(sphere);
+                
+                // rendering plane
+                for (auto plane : planes) {
+                    res = plane->hit(ray);
                     if (res > 0) {
+                        flag = true;
+                        inside = plane->getPigment();
+                    }
+                }
+
+                // rendering spheres
+                for (auto sphere : spheres) {
+                    res = sphere->hit(ray);
+                    if (res > 0) {
+                        if (flag)
+                            inside = Pigment();
                         flag = true;
                         vec3 curPos = ray.getCurrentPos(res);
                         vec3 normal = curPos - sphere->getCenter();
@@ -80,7 +97,8 @@ void Scene::render(ostream& out) {
                         break;
                     }
                 }
-            } 
+            }
+            
             inside = inside / N;
 
             if (flag) {

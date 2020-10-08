@@ -25,7 +25,7 @@ class Ray {
             return position + direction * time;
         }
 
-        double hit(shared_ptr<Sphere> sphere);
+      //  double hit(shared_ptr<Sphere> sphere);
 
     public:
         vec3 position;
@@ -35,7 +35,7 @@ class Ray {
 
 };
 
-
+/*
 double Ray::hit(shared_ptr<Sphere> sphere) {
     vec3 e = position;
 	vec3 c = sphere->getCenter();
@@ -49,14 +49,14 @@ double Ray::hit(shared_ptr<Sphere> sphere) {
 	if (discriminant < 0)
 		return -1;
 	return t1 < t2 ? t1 : t2;
-/*
+
 	float t1 = d.dot(e - c) * -1 + sqrt(discriminant) / d.dot(d);
 	float t2 = d.dot(e - c) * -1 - sqrt(discriminant) / d.dot(d);
 
 	vec3 curPos = (ray.getCurrentPos(t1) - ray.getCurrentPos()).leng();
 	vec3 curPos2 = (ray.getCurrentPos(t2) - ray.getCurrentPos()).leng();
-	return curPos < curPos2 ? curPos : curPos2; */
-}
+	return curPos < curPos2 ? curPos : curPos2; 
+} */
 
 void Ray::setup(shared_ptr<Camera> camera, float xPos, float yPos, float width, float height) {
     vec3 eye = position = camera->getEye();

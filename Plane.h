@@ -2,8 +2,9 @@
 
 #include "vec3.h"
 #include "Pigment.h"
+#include "Object.h"
 
-class Plane {
+class Plane : public Object {
     public:
         Plane() {}
 
@@ -19,9 +20,21 @@ class Plane {
         void setDistance(double distance) { this->distance = distance; }
         void setPigment(vec3 pigment) { this->pigment.setPigment(pigment); }
     
+        virtual double hit(Ray ray);
+
     private:
         vec3 normal;
         double distance;
         Pigment pigment;
 
 };
+
+double Plane::hit(Ray ray) {
+    vec3 n = normal;
+    vec3 dir = ray.direction;
+
+    n.normalize();
+    dir.normalize();
+
+    return -1 * (ray.position.dot(n) - distance) / (dir.dot(n));
+}
