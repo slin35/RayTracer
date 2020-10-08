@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
 		shadingModel = stoi(argv[5]);
 
 		if (inFile) {
-			Scene scene(width, height);
+			Scene scene(width, height, shadingModel);
 			Parser p(inFile, scene);
 
 			if (outFile) {

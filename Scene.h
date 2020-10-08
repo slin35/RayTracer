@@ -8,13 +8,16 @@
 #include "Ray.h"
 #include "Light.h"
 #include "Plane.h"
+#include "Util.h"
 
+#define N 1
 
 using namespace std;
 
 class Scene {
     public:
-        Scene(int width, int height) : width(width), height(height) {}
+        Scene(int width, int height, int renderMode) 
+            : width(width), height(height), renderMode(renderMode) {}
 
         vector<shared_ptr<Camera>> getCameras() { return cameras; }
         vector<shared_ptr<Sphere>> getSpheres() { return spheres; }
@@ -40,6 +43,7 @@ class Scene {
     public:
         int width;
         int height;
+        int renderMode;
         vector<shared_ptr<Camera>> cameras;
         vector<shared_ptr<Sphere>> spheres;
         vector<shared_ptr<Light>> lights;
@@ -58,19 +62,27 @@ void Scene::render(ostream& out) {
 
     writeOutHeader(out);
 
-    for (int y = 0; y < height; y++) {
+    for (int y = height - 1; y >= 0; y--) {
         for (int x = 0; x < width; x++) {
-            Ray ray(cameras[0], x, y, width, height);
+            Ray ray;
             Pigment inside;
 
-            for (auto sphere : spheres) {
-                res = ray.hit(sphere);
-                if (res > 0) {
-                    flag = true;
-                    inside = Pigment(sphere->getpigment());
-                    break;
+            for (int i = 0; i < N; i++) {
+                ray = Ray(cameras[0], x + Util::randD(-0.5), y + Util::randD(-0.5), width, height);
+                for (auto sphere : spheres) {
+                    res = ray.hit(sphere);
+                    if (res > 0) {
+                        flag = true;
+                        vec3 curPos = ray.getCurrentPos(res);
+                        vec3 normal = curPos - sphere->getCenter();
+                        vec3 light = lights[0]->getPosition() - curPos;
+                        inside = inside + sphere->getpigment() * lights[0]->getPigment() * Util::phongDiffuse(1, normal, light);
+                        break;
+                    }
                 }
-            }
+            } 
+            inside = inside / N;
+
             if (flag) {
                 writeOutPixel(out, x, y, ray, inside, false);
                 flag = false;
@@ -78,7 +90,9 @@ void Scene::render(ostream& out) {
             else {
                 writeOutPixel(out, x, y, ray, outside, false);
             }
+
         }
+        out << "\n";
     }
 
 }
@@ -93,14 +107,11 @@ void Scene::writeOutHeader(ostream& out) {
 // fill in pixel value
 void Scene::writeOutPixel(ostream& out, int xpos, int ypos, Ray ray, Pigment color, bool disAttenuation) {
     float d;
-    vec3 unitDir = ray.direction;
-    unitDir.normalize();
-    auto t = 0.5 * (unitDir.val[1] + 1);
 
     if (disAttenuation)
         d = 1;
     else
         d = 1;
 
-    out << (int)(255 * color.r * d) << " " << (int)(255 * color.g * d) << " " << (int)(255 * color.b * d)<< "\n";
+    out << (int)(255 * color.r * d) << " " << (int)(255 * color.g * d) << " " << (int)(255 * color.b * d)<< " ";
 }

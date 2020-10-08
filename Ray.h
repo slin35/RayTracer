@@ -43,15 +43,18 @@ double Ray::hit(shared_ptr<Sphere> sphere) {
 	float r = sphere->getRadius();
 	float discriminant = pow(d.dot(e - c),2) - d.dot(d) * ((e - c).dot(e - c) - pow(r, 2));
 
+    float t1 = d.dot(e - c) * -1 + sqrt(discriminant) / d.dot(d);
+	float t2 = d.dot(e - c) * -1 - sqrt(discriminant) / d.dot(d);
+
 	if (discriminant < 0)
 		return -1;
-	return 1;
+	return t1 < t2 ? t1 : t2;
 /*
 	float t1 = d.dot(e - c) * -1 + sqrt(discriminant) / d.dot(d);
 	float t2 = d.dot(e - c) * -1 - sqrt(discriminant) / d.dot(d);
 
-	float curPos = (ray.getCurrentPos(t1) - ray.getCurrentPos()).leng();
-	float curPos2 = (ray.getCurrentPos(t2) - ray.getCurrentPos()).leng();
+	vec3 curPos = (ray.getCurrentPos(t1) - ray.getCurrentPos()).leng();
+	vec3 curPos2 = (ray.getCurrentPos(t2) - ray.getCurrentPos()).leng();
 	return curPos < curPos2 ? curPos : curPos2; */
 }
 

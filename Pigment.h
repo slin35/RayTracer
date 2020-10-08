@@ -5,9 +5,11 @@
 
 class Pigment {
     public:
-        Pigment() {}
+        Pigment() : r(0), g(0), b(0) {}
+
         Pigment(double r, double g, double b) : 
             r(r), g(g), b(b) {}
+
         Pigment(vec3 pigment) : 
             r(pigment.x()), g(pigment.y()), b(pigment.z()) {}
 
@@ -20,6 +22,38 @@ class Pigment {
             r = pigment.x();
             g = pigment.y();
             b = pigment.z();
+        }
+
+        Pigment operator+(const Pigment p) const {
+            Pigment res;
+            res.r = p.r + this->r;
+            res.g = p.g + this->g;
+            res.b = p.b + this->b;
+            return res;
+        }
+
+        Pigment operator/(const double Sc) const {
+            Pigment res;
+            res.r = this->r / Sc;
+            res.g = this->g / Sc;
+            res.b = this->b / Sc;
+            return res;
+        }
+
+        Pigment operator*(const double Sc) const {
+            Pigment res;
+            res.r = this->r * Sc;
+            res.g = this->g * Sc;
+            res.b = this->b * Sc;
+            return res;
+        }
+
+        Pigment operator*(const Pigment p) const {
+            Pigment res;
+            res.r = this->r * p.r;
+            res.g = this->g * p.g;
+            res.b = this->b * p.b;
+            return res;
         }
 
     public:
