@@ -1,6 +1,8 @@
 #pragma once
 
 #include <vector>
+#include <iterator>
+#include <algorithm>
 
 #include "Camera.h"
 #include "Sphere.h"
@@ -68,22 +70,32 @@ void Scene::render(ostream& out) {
 
     for (int y = height - 1; y >= 0; y--) {
         for (int x = 0; x < width; x++) {
-            Ray ray;
+            Ray ray, shadowFeeler;
             Pigment inside;
 
             for (int i = 0; i < N; i++) {
                 ray = Ray(cameras[0], x + Util::randD(-0.5), y + Util::randD(-0.5), width, height);
-                
                 
                 // rendering spheres
                 for (auto sphere : spheres) {
                     res = sphere->hit(ray);
                     if (res > 0) {
                         flag = true;
-                        vec3 curPos = ray.getCurrentPos(res);
-                        vec3 normal = curPos - sphere->getCenter();
-                        vec3 light = lights[0]->getPosition() - curPos;
-                        inside = inside + sphere->getpigment() * lights[0]->getPigment() * Util::phongDiffuse(1, normal, light);
+                        for (auto light : lights) {
+                            vec3 curPos = ray.getCurrentPos(res);
+                            vec3 normal = curPos - sphere->getCenter();
+                            vec3 l = light->getPosition() - curPos;
+                            auto it = find(objects.begin(), objects.end(), sphere);
+
+                            shadowFeeler = Ray(curPos, l);
+                            if (sphere->inShadow(shadowFeeler, objects, distance(objects.begin(), it)))
+                                inside = inside + Pigment(0, 0, 0.1);
+                            else
+                                inside = inside + sphere->getpigment() * lights[0]->getPigment() * Util::phongDiffuse(1, normal, l);
+                            
+                        }
+                        if (lights.size() == 0)
+                            inside = inside + sphere->getpigment();
                         break;
                     }
                 }
@@ -95,9 +107,23 @@ void Scene::render(ostream& out) {
             if (!flag) {
                 for (auto plane : planes) {
                     res = plane->hit(ray);
+                    
+
                     if (res > 0) {
                         flag = true;
-                        inside = plane->getPigment();
+                        for (auto light : lights) {
+                            shadowFeeler = Ray(ray.getCurrentPos(res), light->getPosition() - ray.getCurrentPos(res));
+                            auto it = find(objects.begin(), objects.end(), plane);
+                            if (plane->inShadow(shadowFeeler, objects, distance(objects.begin(), it))) {
+                                inside = inside + Pigment(0, 0, 0.1);
+                            }
+                            else {
+                                inside = plane->getPigment();
+                            }
+                        }
+                        if (lights.size() == 0)
+                            inside = plane->getPigment();
+                        
                     }
                 }
             }

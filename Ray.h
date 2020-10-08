@@ -15,7 +15,7 @@ class Ray {
         Ray() {}
 
         Ray(vec3 position, vec3 direction) :
-            position(position), direction(direction) {}
+            position(position), direction(direction) { direction.normalize(); }
 
         Ray(shared_ptr<Camera> camera, float xPos, float yPos, float width, float height) {
             setup(camera, xPos, yPos, width, height);

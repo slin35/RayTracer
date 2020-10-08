@@ -48,3 +48,4 @@ double Sphere::hit(Ray ray) {
 
     return t1 < t2 ? t1 : t2;
 }
+
