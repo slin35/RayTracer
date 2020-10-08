@@ -68,6 +68,9 @@ void Scene::render(ostream& out) {
 
     writeOutHeader(out);
 
+    if (lights.size() == 0)
+        renderMode = -1;
+
     for (int y = height - 1; y >= 0; y--) {
         for (int x = 0; x < width; x++) {
             Ray ray, shadowFeeler;
@@ -81,21 +84,15 @@ void Scene::render(ostream& out) {
                     res = sphere->hit(ray);
                     if (res > 0) {
                         flag = true;
-                        for (auto light : lights) {
-                            vec3 curPos = ray.getCurrentPos(res);
-                            vec3 normal = curPos - sphere->getCenter();
-                            vec3 l = light->getPosition() - curPos;
-                            auto it = find(objects.begin(), objects.end(), sphere);
-
-                            shadowFeeler = Ray(curPos, l);
-                            if (sphere->inShadow(shadowFeeler, objects, distance(objects.begin(), it)))
-                                inside = inside + Pigment(0, 0, 0.1);
-                            else
-                                inside = inside + sphere->getpigment() * lights[0]->getPigment() * Util::phongDiffuse(1, normal, l);
-                            
-                        }
-                        if (lights.size() == 0)
+                        switch (renderMode) {
+                        case -1:
                             inside = inside + sphere->getpigment();
+                            break;
+                        case 0:
+                            inside = inside + Util::phongMode(lights, objects, sphere, ray.getCurrentPos(res));
+                        default:
+                            break;
+                        }
                         break;
                     }
                 }
@@ -111,19 +108,15 @@ void Scene::render(ostream& out) {
 
                     if (res > 0) {
                         flag = true;
-                        for (auto light : lights) {
-                            shadowFeeler = Ray(ray.getCurrentPos(res), light->getPosition() - ray.getCurrentPos(res));
-                            auto it = find(objects.begin(), objects.end(), plane);
-                            if (plane->inShadow(shadowFeeler, objects, distance(objects.begin(), it))) {
-                                inside = inside + Pigment(0, 0, 0.1);
-                            }
-                            else {
-                                inside = plane->getPigment();
-                            }
-                        }
-                        if (lights.size() == 0)
+                        switch (renderMode) {
+                        case -1:
                             inside = plane->getPigment();
-                        
+                            break;
+                        case 0:
+                            inside = inside + Util::phongMode(lights, objects, plane, ray.getCurrentPos(res));
+                        default:
+                            break;
+                        }
                     }
                 }
             }
