@@ -36,5 +36,5 @@ double Plane::hit(Ray ray) {
     n.normalize();
     dir.normalize();
 
-    return -1 * (ray.position.dot(n) - distance) / (dir.dot(n));
+    return (distance - ray.position.dot(n)) / (dir.dot(n));
 }
