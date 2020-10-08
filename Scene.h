@@ -11,7 +11,7 @@
 #include "Util.h"
 #include "Object.h"
 
-#define N 1
+#define N 4
 
 using namespace std;
 
@@ -74,21 +74,11 @@ void Scene::render(ostream& out) {
             for (int i = 0; i < N; i++) {
                 ray = Ray(cameras[0], x + Util::randD(-0.5), y + Util::randD(-0.5), width, height);
                 
-                // rendering plane
-                for (auto plane : planes) {
-                    res = plane->hit(ray);
-                    if (res > 0) {
-                        flag = true;
-                        inside = plane->getPigment();
-                    }
-                }
-
+                
                 // rendering spheres
                 for (auto sphere : spheres) {
                     res = sphere->hit(ray);
                     if (res > 0) {
-                        if (flag)
-                            inside = Pigment();
                         flag = true;
                         vec3 curPos = ray.getCurrentPos(res);
                         vec3 normal = curPos - sphere->getCenter();
@@ -98,8 +88,19 @@ void Scene::render(ostream& out) {
                     }
                 }
             }
-            
+
             inside = inside / N;
+
+            // rendering plane
+            if (!flag) {
+                for (auto plane : planes) {
+                    res = plane->hit(ray);
+                    if (res > 0) {
+                        flag = true;
+                        inside = plane->getPigment();
+                    }
+                }
+            }
 
             if (flag) {
                 writeOutPixel(out, x, y, ray, inside, false);
