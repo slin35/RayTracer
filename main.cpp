@@ -17,11 +17,11 @@ void readInts(istream& is, vector<int>& res) {
 }
 
 int main(int argc, char *argv[]) {
-	int width, height, shadingModel;
+	int width, height, shadingModel, numRays, bounces;
 	ifstream inFile;
 	ofstream outFile;
 
-	if (argc < 6) {
+	if (argc < 8) {
 		cerr << "Error format: a.out inFile outFile" << endl;
 	} else {
 		width = stoi(argv[1]);
@@ -33,6 +33,9 @@ int main(int argc, char *argv[]) {
 		cout << "writing to: " << argv[4] << endl;
 
 		shadingModel = stoi(argv[5]);
+		numRays = stoi(argv[6]);
+		bounces = stoi(argv[7]);
+
 
 		if (inFile) {
 			Scene scene(width, height, shadingModel);

@@ -1,6 +1,8 @@
 #pragma once
 
 #include <iostream>
+#include <math.h>
+
 #include "vec3.h"
 
 class Pigment {
@@ -53,6 +55,14 @@ class Pigment {
             res.r = this->r * p.r;
             res.g = this->g * p.g;
             res.b = this->b * p.b;
+            return res;
+        }
+
+        Pigment operator^(const double exponent) const {
+            Pigment res;
+            res.r = pow(this->r, exponent);
+            res.g = pow(this->g, exponent);
+            res.b = pow(this->b, exponent);
             return res;
         }
 

@@ -21,6 +21,7 @@ class Plane : public Object {
         void setPigment(vec3 pigment) { this->pigment.setPigment(pigment); }
     
         virtual double hit(Ray ray);
+        virtual Pigment getColor() { return pigment; }
 
     private:
         vec3 normal;

@@ -25,6 +25,7 @@ class Sphere : public Object {
         Pigment getpigment() const { return pigment; }
 
         virtual double hit(Ray ray);
+        virtual Pigment getColor() { return pigment; }
 
     private:
         vec3 center;

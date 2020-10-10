@@ -13,7 +13,7 @@
 #include "Util.h"
 #include "Object.h"
 
-#define N 4
+#define N 20
 
 using namespace std;
 
@@ -68,7 +68,7 @@ void Scene::render(ostream& out) {
 
     writeOutHeader(out);
 
-    if (lights.size() == 0)
+    if (lights.size() == 0 && renderMode != 1)
         renderMode = -1;
 
     for (int y = height - 1; y >= 0; y--) {
@@ -90,6 +90,10 @@ void Scene::render(ostream& out) {
                             break;
                         case 0:
                             inside = inside + Util::phongMode(lights, objects, sphere, ray.getCurrentPos(res));
+                            break;
+                        case 1:
+                            inside = inside + Util::foggyMode(sphere, ray, objects, 20);
+                            break;
                         default:
                             break;
                         }
@@ -114,6 +118,11 @@ void Scene::render(ostream& out) {
                             break;
                         case 0:
                             inside = inside + Util::phongMode(lights, objects, plane, ray.getCurrentPos(res));
+                            break;
+                        case 1:
+                            inside = plane->getPigment();
+                        //    inside = inside + Util::foggyMode(plane, ray, objects, 20);
+                            break;
                         default:
                             break;
                         }
@@ -150,6 +159,9 @@ void Scene::writeOutPixel(ostream& out, int xpos, int ypos, Ray ray, Pigment col
         d = 1;
     else
         d = 1;
-
-    out << (int)(255 * color.r * d) << " " << (int)(255 * color.g * d) << " " << (int)(255 * color.b * d)<< " ";
+    
+    Util::gammaEncoder(color);
+    color = color * 255 * d;
+    
+    out << (int)color.r << " " << (int)color.g << " " << (int)color.b << " ";
 }
