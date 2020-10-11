@@ -1,2 +1,13 @@
-clang++ -std=c++11 -stdlib=libc++ -o raytrace main.cpp
-./raytrace 640 480 simple1-1.pov out.ppm 0 20 50
+#!/bin/bash
+
+mkdir -p build
+cd build
+cmake ../
+cmake --build .
+mkdir -p ../output
+./raytrace 640 480 ../input/simple3.pov ../output/out.ppm 1 20 50
+
+# for Mac OSX
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    open ../output/out.ppm
+fi
