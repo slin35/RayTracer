@@ -25,7 +25,7 @@ class Util {
         static double phongDiffuse(double Kd, vec3 normal, vec3 light);
         static double max(double a, double b) { return a > b ? a : b; }
         static Pigment phongMode(vector<shared_ptr<Light>> lights, vector<shared_ptr<Object>> objects, shared_ptr<Object> o, vec3 curPos);
-        static Pigment foggyMode(shared_ptr<Object> object, Ray ray, vector<shared_ptr<Object>> objects, int bounces);
+        static Pigment foggyMode(vector<shared_ptr<Light>> lights, shared_ptr<Object> object, Ray ray, vector<shared_ptr<Object>> objects, Pigment background, int bounces);
         static void gammaEncoder(Pigment& p, double gamma);
 
     private:
@@ -55,7 +55,7 @@ Pigment Util::phongMode(vector<shared_ptr<Light>> lights, vector<shared_ptr<Obje
         n = o->getN(curPos);
         shadowFeeler = Ray(curPos, l);
         res = o->inShadow(shadowFeeler, objects, distance(objects.begin(), it));
-        
+
         if (res > 0) {
             color = color + Pigment(0, 0, 0.02);
         }
@@ -68,34 +68,38 @@ Pigment Util::phongMode(vector<shared_ptr<Light>> lights, vector<shared_ptr<Obje
     return color;
 }
 
-Pigment Util::foggyMode(shared_ptr<Object> object, Ray ray, vector<shared_ptr<Object>> objects, int bounces) {
-    double min = INT_MAX;
+Pigment Util::foggyMode(vector<shared_ptr<Light>> lights, shared_ptr<Object> object, Ray ray, vector<shared_ptr<Object>> objects, Pigment background, int bounces) {
+    Pigment color;
     double res;
-    Pigment color(1, 1, 1);
-    vec3 position = ray.position;
+    
 
     if (bounces == 0) {
-        return object->getColor();
+        return color;
     }
 
-    for (auto obj : objects) {
-        if (object != obj) {
-            res = obj->hit(ray);
-            if (res > 0 && res < min) {
-                min = res;
-                color = obj->getColor();
-                position = ray.getCurrentPos(res);
-            }
+    for (auto o : objects) {
+        res = o->hit(ray);
+        if (res > 0) {
+            vec3 s = vec3(Util::randD(-0.5) * 2, Util::randD(-0.5) * 2, Util::randD(-0.5) * 2);
+            while (!inUnitSphere(s))
+                s = vec3(Util::randD(-0.5) * 2, Util::randD(-0.5) * 2, Util::randD(-0.5) * 2);
+            vec3 position = ray.getCurrentPos(res);
+            vec3 normal = o->getN(position);
+
+            normal.normalize();
+
+            vec3 direction = normal + s;
+        //    ray.direction.normalize();
+
+        //    vec3 direction = ray.direction + s;
+
+            Ray scatterRay = Ray(position, direction);
+
+            return o->getColor() * foggyMode(lights, object, scatterRay, objects, background, bounces - 1);
         }
     }
-    vec3 pos = vec3(randD() * 2 - 1, randD() * 2 - 1, randD() * 2 - 1);
-    while (!inUnitSphere(pos))
-        pos = vec3(randD() * 2 - 1, randD() * 2 - 1, randD() * 2 - 1);
-    ray.direction.normalize();
-    vec3 n = ray.direction + pos;
-    n.normalize();
-    Ray scatter = Ray(position, ray.direction + pos);
-    return color * foggyMode(object, scatter, objects, bounces - 1);
+
+    return background;
 }
 
 bool Util::inUnitSphere(vec3 pos) {

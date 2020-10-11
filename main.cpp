@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
 
 
 		if (inFile) {
-			Scene scene(width, height, shadingModel);
+			Scene scene(width, height, shadingModel, numRays, bounces);
 			Parser p(inFile, scene);
 
 			if (outFile) {

@@ -13,14 +13,12 @@
 #include "Util.h"
 #include "Object.h"
 
-#define N 20
-
 using namespace std;
 
 class Scene {
     public:
-        Scene(int width, int height, int renderMode) 
-            : width(width), height(height), renderMode(renderMode) {}
+        Scene(int width, int height, int renderMode, int numRays, int bounces) 
+            : width(width), height(height), renderMode(renderMode), numRays(numRays), bounces(bounces) {}
 
         vector<shared_ptr<Camera>> getCameras() { return cameras; }
         vector<shared_ptr<Sphere>> getSpheres() { return spheres; }
@@ -49,6 +47,8 @@ class Scene {
         int width;
         int height;
         int renderMode;
+        int numRays;
+        int bounces;
         vector<shared_ptr<Camera>> cameras;
         vector<shared_ptr<Sphere>> spheres;
         vector<shared_ptr<Light>> lights;
@@ -56,6 +56,7 @@ class Scene {
         vector<shared_ptr<Object>> objects;
         Pigment inside{0, 0, 0};
         Pigment outside{0.6, 0.8, 0.3};
+      //  Pigment outside{1, 1, 1};
         
         void writeOutHeader(ostream& out);
         void writeOutPixel(ostream& out, int xpos, int ypos, Pigment color, bool disAttenuation);
@@ -76,7 +77,7 @@ void Scene::render(ostream& out) {
             Ray ray;
             Pigment color;
 
-            for (int i = 0; i < N; i++) {
+            for (int i = 0; i < numRays; i++) {
                 ray = Ray(cameras[0], x + Util::randD(-0.5), y + Util::randD(-0.5), width, height);
 
                 for (auto o : objects) {
@@ -91,6 +92,8 @@ void Scene::render(ostream& out) {
                         case 0:
                             color = color + Util::phongMode(lights, objects, o, ray.getCurrentPos(res));
                             break;
+                        case 1:
+                            color = color + Util::foggyMode(lights, o, ray, objects, outside, bounces);
                         default:
                             break;
                         }
@@ -106,7 +109,7 @@ void Scene::render(ostream& out) {
                 }
             }
 
-            color = color / N;
+            color = color / numRays;
 
             writeOutPixel(out, x, y, color, false);
         }
@@ -131,7 +134,7 @@ void Scene::writeOutPixel(ostream& out, int xpos, int ypos, Pigment color, bool 
     else
         d = 1;
     
-    Util::gammaEncoder(color, 1.5);
+    Util::gammaEncoder(color, 1.3);
     color = color * 255 * d;
     
     out << (int)color.r << " " << (int)color.g << " " << (int)color.b << " ";
