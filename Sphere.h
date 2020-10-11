@@ -26,6 +26,7 @@ class Sphere : public Object {
 
         virtual double hit(Ray ray);
         virtual Pigment getColor() { return pigment; }
+        virtual vec3 getN(vec3 curPos = vec3(0, 0, 0));
 
     private:
         vec3 center;
@@ -50,3 +51,6 @@ double Sphere::hit(Ray ray) {
     return t1 < t2 ? t1 : t2;
 }
 
+vec3 Sphere::getN(vec3 curPos) {
+    return curPos - center;
+}

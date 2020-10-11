@@ -22,6 +22,7 @@ class Plane : public Object {
     
         virtual double hit(Ray ray);
         virtual Pigment getColor() { return pigment; }
+        virtual vec3 getN(vec3 curPos = vec3(0, 0, 0));
 
     private:
         vec3 normal;
@@ -38,4 +39,8 @@ double Plane::hit(Ray ray) {
     dir.normalize();
 
     return (distance - ray.position.dot(n)) / (dir.dot(n));
+}
+
+vec3 Plane::getN(vec3 curPos) {
+    return normal;
 }

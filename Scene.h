@@ -58,7 +58,7 @@ class Scene {
         Pigment outside{0.6, 0.8, 0.3};
         
         void writeOutHeader(ostream& out);
-        void writeOutPixel(ostream& out, int xpos, int ypos, Ray ray, Pigment color, bool disAttenuation);
+        void writeOutPixel(ostream& out, int xpos, int ypos, Pigment color, bool disAttenuation);
         
 };
 
@@ -73,26 +73,23 @@ void Scene::render(ostream& out) {
 
     for (int y = height - 1; y >= 0; y--) {
         for (int x = 0; x < width; x++) {
-            Ray ray, shadowFeeler;
-            Pigment inside;
+            Ray ray;
+            Pigment color;
 
             for (int i = 0; i < N; i++) {
                 ray = Ray(cameras[0], x + Util::randD(-0.5), y + Util::randD(-0.5), width, height);
-                
-                // rendering spheres
-                for (auto sphere : spheres) {
-                    res = sphere->hit(ray);
+
+                for (auto o : objects) {
+                    res = o->hit(ray);
                     if (res > 0) {
                         flag = true;
-                        switch (renderMode) {
+                        switch (renderMode)
+                        {
                         case -1:
-                            inside = inside + sphere->getpigment();
+                            color = color + o->getColor();
                             break;
                         case 0:
-                            inside = inside + Util::phongMode(lights, objects, sphere, ray.getCurrentPos(res));
-                            break;
-                        case 1:
-                            inside = inside + Util::foggyMode(sphere, ray, objects, 20);
+                            color = color + Util::phongMode(lights, objects, o, ray.getCurrentPos(res));
                             break;
                         default:
                             break;
@@ -100,44 +97,18 @@ void Scene::render(ostream& out) {
                         break;
                     }
                 }
-            }
 
-            inside = inside / N;
-
-            // rendering plane
-            if (!flag) {
-                for (auto plane : planes) {
-                    res = plane->hit(ray);
-                    
-
-                    if (res > 0) {
-                        flag = true;
-                        switch (renderMode) {
-                        case -1:
-                            inside = plane->getPigment();
-                            break;
-                        case 0:
-                            inside = inside + Util::phongMode(lights, objects, plane, ray.getCurrentPos(res));
-                            break;
-                        case 1:
-                            inside = plane->getPigment();
-                        //    inside = inside + Util::foggyMode(plane, ray, objects, 20);
-                            break;
-                        default:
-                            break;
-                        }
-                    }
+                if (!flag) {
+                    color = color + outside;
+                }
+                else {
+                    flag = false;
                 }
             }
 
-            if (flag) {
-                writeOutPixel(out, x, y, ray, inside, false);
-                flag = false;
-            }
-            else {
-                writeOutPixel(out, x, y, ray, outside, false);
-            }
+            color = color / N;
 
+            writeOutPixel(out, x, y, color, false);
         }
         out << "\n";
     }
@@ -152,7 +123,7 @@ void Scene::writeOutHeader(ostream& out) {
 }
 
 // fill in pixel value
-void Scene::writeOutPixel(ostream& out, int xpos, int ypos, Ray ray, Pigment color, bool disAttenuation) {
+void Scene::writeOutPixel(ostream& out, int xpos, int ypos, Pigment color, bool disAttenuation) {
     float d;
 
     if (disAttenuation)
@@ -160,7 +131,7 @@ void Scene::writeOutPixel(ostream& out, int xpos, int ypos, Ray ray, Pigment col
     else
         d = 1;
     
-    Util::gammaEncoder(color);
+    Util::gammaEncoder(color, 1.5);
     color = color * 255 * d;
     
     out << (int)color.r << " " << (int)color.g << " " << (int)color.b << " ";
