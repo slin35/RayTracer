@@ -3,7 +3,7 @@
 mkdir -p build
 cd build
 cmake ../
-cmake --build .
+make
 mkdir -p ../output
 ./raytrace 640 480 ../input/simple3.pov ../output/out.ppm 1 20 50
 

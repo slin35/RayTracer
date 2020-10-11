@@ -73,6 +73,7 @@ void Scene::render(ostream& out) {
         renderMode = -1;
 
     for (int y = height - 1; y >= 0; y--) {
+        cerr << "\r rows remaining:" << y << " " << flush;
         for (int x = 0; x < width; x++) {
             Ray ray;
             Pigment color;
