@@ -95,7 +95,7 @@ Pigment Util::foggyMode(vector<shared_ptr<Light>> lights, shared_ptr<Object> obj
 
             Ray scatterRay = Ray(position, direction);
 
-            return o->getColor() * foggyMode(lights, object, scatterRay, objects, background, bounces - 1);
+            return o->getColor() * foggyMode(lights, o, scatterRay, objects, background, bounces - 1);
         }
     }
 

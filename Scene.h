@@ -56,7 +56,7 @@ class Scene {
         vector<shared_ptr<Object>> objects;
         Pigment inside{0, 0, 0};
         Pigment outside{0.6, 0.8, 0.3};
-      //  Pigment outside{1, 1, 1};
+    //    Pigment outside{1, 1, 1};
         
         void writeOutHeader(ostream& out);
         void writeOutPixel(ostream& out, int xpos, int ypos, Pigment color, bool disAttenuation);
@@ -134,7 +134,7 @@ void Scene::writeOutPixel(ostream& out, int xpos, int ypos, Pigment color, bool 
     else
         d = 1;
     
-    Util::gammaEncoder(color, 1.3);
+    Util::gammaEncoder(color, 2);
     color = color * 255 * d;
     
     out << (int)color.r << " " << (int)color.g << " " << (int)color.b << " ";

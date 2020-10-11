@@ -39,9 +39,11 @@ double Sphere::hit(Ray ray) {
     vec3 e = ray.position;
     vec3 c = center;
     vec3 d = ray.direction;
+
+    d.normalize();
     double r = radius;
     double discriminant = pow(d.dot(e - c),2) - d.dot(d) * ((e - c).dot(e - c) - pow(r, 2));
-
+    
     if (discriminant < 0)
         return -1;
 
