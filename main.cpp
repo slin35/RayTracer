@@ -9,12 +9,6 @@
 
 using namespace std;
 
-void readInts(istream& is, vector<int>& res) {
-	int inI;
-	while (is >> inI) {
-		res.push_back(inI);
-	}
-}
 
 int main(int argc, char *argv[]) {
 	int width, height, shadingModel, numRays, bounces;
@@ -22,7 +16,7 @@ int main(int argc, char *argv[]) {
 	ofstream outFile;
 
 	if (argc < 8) {
-		cerr << "Error format: a.out inFile outFile" << endl;
+		cerr << "Error format: a.out width height inFile outFile shading_model numRays_perPixel recursionDepth" << endl;
 	} else {
 		width = stoi(argv[1]);
 		height = stoi(argv[2]);

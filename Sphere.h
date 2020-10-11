@@ -35,6 +35,7 @@ class Sphere : public Object {
 
 };
 
+// returns the t value along the ray direction intersecting the sphere
 double Sphere::hit(Ray ray) {
     vec3 e = ray.position;
     vec3 c = center;

@@ -32,6 +32,7 @@ class Util {
         static bool inUnitSphere(vec3 pos);
 };
 
+// generating a random float in range 0 - 1 with a shift default to 0
 double Util::randD(double val = 0) {
     return static_cast<double>(rand()) / static_cast<double>(RAND_MAX) + val;
 }
@@ -43,6 +44,7 @@ double Util::phongDiffuse(double Kd, vec3 normal, vec3 light) {
     return max(0, normal.dot(light)) * Kd;
 }
 
+// returning phong diffuse color with shadow feeler for any given geometry
 Pigment Util::phongMode(vector<shared_ptr<Light>> lights, vector<shared_ptr<Object>> objects, shared_ptr<Object> o, vec3 curPos) {
     Pigment color, shadow;
     vec3 l, n;
@@ -68,11 +70,11 @@ Pigment Util::phongMode(vector<shared_ptr<Light>> lights, vector<shared_ptr<Obje
     return color;
 }
 
+// returning foggy diffuse for any given object
 Pigment Util::foggyMode(vector<shared_ptr<Light>> lights, shared_ptr<Object> object, Ray ray, vector<shared_ptr<Object>> objects, Pigment background, int bounces) {
     Pigment color;
     double res;
     
-
     if (bounces == 0) {
         return color;
     }
@@ -89,9 +91,6 @@ Pigment Util::foggyMode(vector<shared_ptr<Light>> lights, shared_ptr<Object> obj
             normal.normalize();
 
             vec3 direction = normal + s;
-        //    ray.direction.normalize();
-
-        //    vec3 direction = ray.direction + s;
 
             Ray scatterRay = Ray(position, direction);
 
@@ -102,12 +101,14 @@ Pigment Util::foggyMode(vector<shared_ptr<Light>> lights, shared_ptr<Object> obj
     return background;
 }
 
+// check if the given vector is inside the unit sphere center at (0, 0, 0) or not
 bool Util::inUnitSphere(vec3 pos) {
     if (pos.leng() <= 1)
         return true;
     return false;
 }
 
+// encode the color with a gamma value
 void Util::gammaEncoder(Pigment& p, double gamma = 2.2) {
     p = p^(1/gamma);
 }

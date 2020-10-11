@@ -48,11 +48,12 @@ class Parser {
                     parseLight();
                 }
                 if (w.compare(PLANE) == 0) {
-                    parsePlance();
+                    parsePlane();
                 }
             }
         }
 
+        // parse camera data and add to list of cameras in the scene
         void parseCamera() {
             string w;
             vec3 tmp;
@@ -99,6 +100,7 @@ class Parser {
             scene.addCamera(camera);
         }
 
+        // parse sphere data and add it to the list of geometries in the scene
         void parseSphere() {
             string w;
             vec3 tmp;
@@ -137,6 +139,7 @@ class Parser {
             scene.addSphere(sphere);
         }
 
+        // parse the light source data and add to list of lights in scene
         void parseLight() {
             char c;
             string w;
@@ -169,7 +172,8 @@ class Parser {
             scene.addLight(light);
         }
 
-        void parsePlance() {
+        // parse plane data and add it to the list of geometries in the scene
+        void parsePlane() {
             char c;
             string w;
             vec3 tmp;
@@ -206,6 +210,7 @@ class Parser {
             scene.addPlane(plane);
         }
 
+        // extracting integers of decimals from a srting
         double extractDouble(string& w) {
             regex target("([-]*[0-9]+[.]*[0-9]*)");
             smatch match;

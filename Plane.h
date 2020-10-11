@@ -31,6 +31,7 @@ class Plane : public Object {
 
 };
 
+// returns the t value along the ray direction intersecting the plane
 double Plane::hit(Ray ray) {
     vec3 n = normal;
     vec3 dir = ray.direction;
