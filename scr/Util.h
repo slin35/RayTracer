@@ -49,14 +49,13 @@ Pigment Util::phongMode(vector<shared_ptr<Light>> lights, vector<shared_ptr<Obje
     Pigment color, shadow;
     vec3 l, n;
     Ray shadowFeeler;
-    auto it = find(objects.begin(), objects.end(), o);
     double res;
 
     for (auto light : lights) {
         l = light->getPosition() - curPos;
         n = o->getN(curPos);
         shadowFeeler = Ray(curPos, l);
-        res = o->inShadow(shadowFeeler, objects, distance(objects.begin(), it));
+        res = o->inShadow(shadowFeeler, objects, o);
 
         if (res > 0) {
             color = color + Pigment(0, 0, 0.02);
@@ -74,6 +73,7 @@ Pigment Util::phongMode(vector<shared_ptr<Light>> lights, vector<shared_ptr<Obje
 Pigment Util::foggyMode(vector<shared_ptr<Light>> lights, shared_ptr<Object> object, Ray ray, vector<shared_ptr<Object>> objects, Pigment background, int bounces) {
     Pigment color;
     double res;
+    double offset = 0.001;
     
     if (bounces == 0) {
         return color;
@@ -90,7 +90,7 @@ Pigment Util::foggyMode(vector<shared_ptr<Light>> lights, shared_ptr<Object> obj
 
             normal.normalize();
 
-            vec3 direction = normal + s;
+            vec3 direction = normal + s + offset;
 
             Ray scatterRay = Ray(position, direction);
 
