@@ -12,6 +12,18 @@ vector
 vec3.h
 /Users/sherry/Documents/473/RayTracer/scr/vec3.h
 
+/Users/sherry/Documents/473/RayTracer/scr/Hit.h
+vector
+-
+algorithm
+-
+limits
+-
+Object.h
+/Users/sherry/Documents/473/RayTracer/scr/Object.h
+Ray.h
+/Users/sherry/Documents/473/RayTracer/scr/Ray.h
+
 /Users/sherry/Documents/473/RayTracer/scr/Light.h
 vec3.h
 /Users/sherry/Documents/473/RayTracer/scr/vec3.h
@@ -99,6 +111,8 @@ Util.h
 /Users/sherry/Documents/473/RayTracer/scr/Util.h
 Object.h
 /Users/sherry/Documents/473/RayTracer/scr/Object.h
+Hit.h
+/Users/sherry/Documents/473/RayTracer/scr/Hit.h
 
 /Users/sherry/Documents/473/RayTracer/scr/Sphere.h
 vector
@@ -137,6 +151,8 @@ Util.h
 /Users/sherry/Documents/473/RayTracer/scr/Util.h
 Plane.h
 /Users/sherry/Documents/473/RayTracer/scr/Plane.h
+Hit.h
+/Users/sherry/Documents/473/RayTracer/scr/Hit.h
 
 /Users/sherry/Documents/473/RayTracer/scr/main.cpp
 iostream
@@ -144,6 +160,8 @@ iostream
 fstream
 -
 vector
+-
+chrono
 -
 Parser.h
 /Users/sherry/Documents/473/RayTracer/scr/Parser.h

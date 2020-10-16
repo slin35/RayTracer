@@ -3,6 +3,7 @@
 
 CMakeFiles/raytrace.dir/scr/main.cpp.o
  /Users/sherry/Documents/473/RayTracer/scr/Camera.h
+ /Users/sherry/Documents/473/RayTracer/scr/Hit.h
  /Users/sherry/Documents/473/RayTracer/scr/Light.h
  /Users/sherry/Documents/473/RayTracer/scr/Object.h
  /Users/sherry/Documents/473/RayTracer/scr/Parser.h

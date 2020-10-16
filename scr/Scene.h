@@ -12,6 +12,7 @@
 #include "Plane.h"
 #include "Util.h"
 #include "Object.h"
+#include "Hit.h"
 
 using namespace std;
 
@@ -73,7 +74,7 @@ void Scene::render(ostream& out) {
         renderMode = -1;
 
     for (int y = height - 1; y >= 0; y--) {
-       // cerr << "\r rows remaining:" << y << " " << flush;
+        cerr << "\r rows remaining:" << y << " " << flush;
         for (int x = 0; x < width; x++) {
             Ray ray;
             Pigment color;
@@ -82,35 +83,27 @@ void Scene::render(ostream& out) {
             for (int i = 0; i < numRays; i++) {
                 ray = Ray(cameras[0], x + Util::randD(-0.5), y + Util::randD(-0.5), width, height);
 
-                // check if the ray hits any geometries
-                for (auto o : objects) {
-                    res = o->hit(ray);
+                shared_ptr<Object> obj;
+                Hit hit(&objects, ray);
 
-                    // if the ray hits a geometry, redner with given shading model
-                    if (res > 0) { 
-                        flag = true;
-                        switch (renderMode)
+                res = hit.getClosestHit(obj);
+
+                if (hit.isHit()) {
+                    switch (renderMode)
                         {
                         case 0:
-                            color = color + Util::phongMode(lights, objects, o, ray.getCurrentPos(res));
+                            color = color + Util::phongMode(&lights, &objects, obj, ray.getCurrentPos(res));
                             break;
                         case 1:
-                            color = color + Util::foggyMode(lights, o, ray, objects, outside, bounces);
+                            color = color + Util::foggyMode(ray, &objects, outside, bounces);
                             break;
                         default:
-                            color = color + o->getColor();
+                            color = color + obj->getColor();
                             break;
                         }
-                        break;
-                    }
-                }
-                
-                // if not hit, returns the background color
-                if (!flag) {
-                    color = color + outside;
                 }
                 else {
-                    flag = false;
+                    color = color + outside;
                 }
             }
 

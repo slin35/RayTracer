@@ -14,6 +14,7 @@
 #include "Ray.h"
 #include "Util.h"
 #include "Plane.h"
+#include "Hit.h"
 
 using namespace std;
 
@@ -24,8 +25,8 @@ class Util {
         static double randD(double val);
         static double phongDiffuse(double Kd, vec3 normal, vec3 light);
         static double max(double a, double b) { return a > b ? a : b; }
-        static Pigment phongMode(vector<shared_ptr<Light>> lights, vector<shared_ptr<Object>> objects, shared_ptr<Object> o, vec3 curPos);
-        static Pigment foggyMode(vector<shared_ptr<Light>> lights, shared_ptr<Object> object, Ray ray, vector<shared_ptr<Object>> objects, Pigment background, int bounces);
+        static Pigment phongMode(vector<shared_ptr<Light>>* lights, vector<shared_ptr<Object>>* objects, shared_ptr<Object> o, vec3 curPos);
+        static Pigment foggyMode(Ray ray, vector<shared_ptr<Object>>* objects, Pigment background, int bounces);
         static void gammaEncoder(Pigment& p, double gamma);
 
     private:
@@ -45,13 +46,13 @@ double Util::phongDiffuse(double Kd, vec3 normal, vec3 light) {
 }
 
 // returning phong diffuse color with shadow feeler for any given geometry
-Pigment Util::phongMode(vector<shared_ptr<Light>> lights, vector<shared_ptr<Object>> objects, shared_ptr<Object> o, vec3 curPos) {
+Pigment Util::phongMode(vector<shared_ptr<Light>>* lights, vector<shared_ptr<Object>>* objects, shared_ptr<Object> o, vec3 curPos) {
     Pigment color, shadow;
     vec3 l, n;
     Ray shadowFeeler;
     double res;
 
-    for (auto light : lights) {
+    for (auto light : *lights) {
         l = light->getPosition() - curPos;
         n = o->getN(curPos);
         shadowFeeler = Ray(curPos, l);
@@ -70,34 +71,34 @@ Pigment Util::phongMode(vector<shared_ptr<Light>> lights, vector<shared_ptr<Obje
 }
 
 // returning foggy diffuse for any given object
-Pigment Util::foggyMode(vector<shared_ptr<Light>> lights, shared_ptr<Object> object, Ray ray, vector<shared_ptr<Object>> objects, Pigment background, int bounces) {
+Pigment Util::foggyMode(Ray ray, vector<shared_ptr<Object>>* objects, Pigment background, int bounces) {
     Pigment color;
     double res;
     double offset = 0.001;
-    
+    Hit hit(objects, ray);
+    shared_ptr<Object> obj;
+
     if (bounces == 0) {
         return color;
     }
 
-    for (auto o : objects) {
-        res = o->hit(ray);
-        if (res > 0) {
-            vec3 s = vec3(Util::randD(-0.5) * 2, Util::randD(-0.5) * 2, Util::randD(-0.5) * 2);
-            while (!inUnitSphere(s))
-                s = vec3(Util::randD(-0.5) * 2, Util::randD(-0.5) * 2, Util::randD(-0.5) * 2);
-            vec3 position = ray.getCurrentPos(res);
-            vec3 normal = o->getN(position);
+    res = hit.getClosestHit(obj);
 
-            normal.normalize();
+    if (hit.isHit()) {
+        vec3 s = vec3(Util::randD(-0.5) * 2, Util::randD(-0.5) * 2, Util::randD(-0.5) * 2);
+        while (!inUnitSphere(s))
+            s = vec3(Util::randD(-0.5) * 2, Util::randD(-0.5) * 2, Util::randD(-0.5) * 2);
+        vec3 position = ray.getCurrentPos(res);
+        vec3 normal = obj->getN(position);
 
-            vec3 direction = normal + s + offset;
+        normal.normalize();
 
-            Ray scatterRay = Ray(position, direction);
+        vec3 direction = normal + s + offset;
 
-            return o->getColor() * foggyMode(lights, o, scatterRay, objects, background, bounces - 1);
-        }
+        Ray scatterRay = Ray(position, direction);
+
+        return obj->getColor() * foggyMode(scatterRay, objects, background, bounces - 1);
     }
-
     return background;
 }
 

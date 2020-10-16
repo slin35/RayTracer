@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <chrono>
 
 #include "Parser.h"
 #include "Camera.h"
@@ -9,6 +10,7 @@
 
 using namespace std;
 
+#define DEBUG 0
 
 int main(int argc, char *argv[]) {
 	int width, height, shadingModel, numRays, bounces;
@@ -33,10 +35,23 @@ int main(int argc, char *argv[]) {
 
 		if (inFile) {
 			Scene scene(width, height, shadingModel, numRays, bounces);
+			auto begin = std::chrono::high_resolution_clock::now();
+			
+
 			Parser p(inFile, scene);
 
+			auto end = std::chrono::high_resolution_clock::now();
+  			auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
+			if (DEBUG)
+				cout << "parsing time " << elapsed.count() * 1e-9 << endl;
+
 			if (outFile) {
+				begin = std::chrono::high_resolution_clock::now();
 				scene.render(outFile);
+				end = std::chrono::high_resolution_clock::now();
+  				elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
+				if (DEBUG)
+					cout << "render time " << elapsed.count() * 1e-9 << endl;
 			}
 			else {
 				cerr << "error writing file" << endl;
