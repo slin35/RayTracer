@@ -19,7 +19,9 @@ using namespace std;
 class Scene {
     public:
         Scene(int width, int height, int renderMode, int numRays, int bounces) 
-            : width(width), height(height), renderMode(renderMode), numRays(numRays), bounces(bounces) {}
+            : width(width), height(height), renderMode(renderMode), numRays(numRays), bounces(bounces) {
+                buffer = vector<vector<Pigment>>(width, vector<Pigment>(height, Pigment()));
+            }
 
         vector<shared_ptr<Camera>> getCameras() { return cameras; }
         vector<shared_ptr<Sphere>> getSpheres() { return spheres; }
@@ -57,10 +59,12 @@ class Scene {
         vector<shared_ptr<Object>> objects;
         Pigment inside{0, 0, 0};
         Pigment outside{0.6, 0.8, 0.3};
+        vector<vector<Pigment>> buffer;
         
         void writeOutHeader(ostream& out);
         void writeOutPixel(ostream& out, int xpos, int ypos, Pigment color, bool disAttenuation);
-        
+        Pigment traceColor(int x, int y);
+        void renderBuffer(ostream& out);
 };
 
 void Scene::render(ostream& out) {
@@ -74,45 +78,12 @@ void Scene::render(ostream& out) {
         renderMode = -1;
 
     for (int y = height - 1; y >= 0; y--) {
-        cerr << "\r rows remaining:" << y << " " << flush;
         for (int x = 0; x < width; x++) {
-            Ray ray;
-            Pigment color;
-            
-            // for every pixel generate rays with position(x +/- 0.5, y +/- 0.5)
-            for (int i = 0; i < numRays; i++) {
-                ray = Ray(cameras[0], x + Util::randD(-0.5), y + Util::randD(-0.5), width, height);
-
-                shared_ptr<Object> obj;
-                Hit hit(&objects, ray);
-
-                res = hit.getClosestHit(obj);
-
-                if (hit.isHit()) {
-                    switch (renderMode)
-                        {
-                        case 0:
-                            color = color + Util::phongMode(&lights, &objects, obj, ray.getCurrentPos(res));
-                            break;
-                        case 1:
-                            color = color + Util::foggyMode(ray, &objects, outside, bounces);
-                            break;
-                        default:
-                            color = color + obj->getColor();
-                            break;
-                        }
-                }
-                else {
-                    color = color + outside;
-                }
-            }
-
-            color = color / numRays;
-
-            writeOutPixel(out, x, y, color, false);
+            buffer[x][y] = traceColor(x, y);
         }
-        out << "\n";
     }
+
+    renderBuffer(out);
 
 }
 
@@ -136,4 +107,52 @@ void Scene::writeOutPixel(ostream& out, int xpos, int ypos, Pigment color, bool 
     color = color * 255 * d;
     
     out << (int)color.r << " " << (int)color.g << " " << (int)color.b << " ";
+}
+
+
+Pigment Scene::traceColor(int x, int y) {
+    Pigment color;
+    Ray ray;
+    double res;
+
+    // for every pixel generate rays with position(x +/- 0.5, y +/- 0.5)
+    for (int i = 0; i < numRays; i++) {
+        ray = Ray(cameras[0], x + Util::randD(-0.5), y + Util::randD(-0.5), width, height);
+
+        shared_ptr<Object> obj;
+        Hit hit(&objects, ray);
+
+        res = hit.getClosestHit(obj);
+
+        if (hit.isHit()) {
+            switch (renderMode)
+                {
+                case 0:
+                    color = color + Util::phongMode(&lights, &objects, obj, ray.getCurrentPos(res));
+                    break;
+                case 1:
+                    color = color + Util::foggyMode(ray, &objects, outside, bounces);
+                    break;
+                default:
+                    color = color + obj->getColor();
+                    break;
+                }
+        }
+        else {
+            color = color + outside;
+        }
+    }
+    color = color / numRays;
+    return color;
+}
+
+
+void Scene::renderBuffer(ostream& out) {
+    for (int y = height - 1; y >= 0; y--) {
+        cerr << "\r rows remaining:" << y << " " << flush;
+        for (int x = 0; x < width; x++) {
+            writeOutPixel(out, x, y, buffer[x][y], false);
+        }
+        out << "\n";
+    }
 }
