@@ -99,6 +99,7 @@ raytrace_EXTERNAL_OBJECTS =
 
 raytrace: CMakeFiles/raytrace.dir/scr/main.cpp.o
 raytrace: CMakeFiles/raytrace.dir/build.make
+raytrace: /usr/local/lib/libomp.dylib
 raytrace: CMakeFiles/raytrace.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/sherry/Documents/473/RayTracer/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable raytrace"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/raytrace.dir/link.txt --verbose=$(VERBOSE)

@@ -19,3 +19,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 if (APPLE)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
 endif()
+
+find_package(OpenMP)
+if (OpenMP_CXX_FOUND)
+    target_link_libraries(${CMAKE_PROJECT_NAME} OpenMP::OpenMP_CXX)
+endif()

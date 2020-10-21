@@ -1,1 +1,1 @@
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++   -O3 -stdlib=libc++ -Wl,-search_paths_first -Wl,-headerpad_max_install_names  CMakeFiles/raytrace.dir/scr/main.cpp.o  -o raytrace 
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++   -O3 -stdlib=libc++ -Wl,-search_paths_first -Wl,-headerpad_max_install_names  CMakeFiles/raytrace.dir/scr/main.cpp.o  -o raytrace  /usr/local/lib/libomp.dylib 
