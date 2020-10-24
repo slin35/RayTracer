@@ -8,9 +8,12 @@
 #include "Sphere.h"
 #include "Scene.h"
 
+#include "Shape.h"
+
 using namespace std;
 
 #define DEBUG 0
+
 
 int main(int argc, char *argv[]) {
 	int width, height, shadingModel, numRays, bounces;
@@ -31,6 +34,11 @@ int main(int argc, char *argv[]) {
 		shadingModel = stoi(argv[5]);
 		numRays = stoi(argv[6]);
 		bounces = stoi(argv[7]);
+
+
+		shared_ptr<Shape> shape = make_shared<Shape>("../resources/bunny.obj");
+
+		shape->initShape(0);
 
 
 		if (inFile) {

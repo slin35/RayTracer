@@ -170,6 +170,33 @@ scr/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/raytrace.dir/build.make CMakeFiles/raytrace.dir/scr/main.cpp.s
 .PHONY : scr/main.cpp.s
 
+scr/tiny_obj_loader.o: scr/tiny_obj_loader.cpp.o
+
+.PHONY : scr/tiny_obj_loader.o
+
+# target to build an object file
+scr/tiny_obj_loader.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/raytrace.dir/build.make CMakeFiles/raytrace.dir/scr/tiny_obj_loader.cpp.o
+.PHONY : scr/tiny_obj_loader.cpp.o
+
+scr/tiny_obj_loader.i: scr/tiny_obj_loader.cpp.i
+
+.PHONY : scr/tiny_obj_loader.i
+
+# target to preprocess a source file
+scr/tiny_obj_loader.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/raytrace.dir/build.make CMakeFiles/raytrace.dir/scr/tiny_obj_loader.cpp.i
+.PHONY : scr/tiny_obj_loader.cpp.i
+
+scr/tiny_obj_loader.s: scr/tiny_obj_loader.cpp.s
+
+.PHONY : scr/tiny_obj_loader.s
+
+# target to generate assembly for a file
+scr/tiny_obj_loader.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/raytrace.dir/build.make CMakeFiles/raytrace.dir/scr/tiny_obj_loader.cpp.s
+.PHONY : scr/tiny_obj_loader.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -182,6 +209,9 @@ help:
 	@echo "... scr/main.o"
 	@echo "... scr/main.i"
 	@echo "... scr/main.s"
+	@echo "... scr/tiny_obj_loader.o"
+	@echo "... scr/tiny_obj_loader.i"
+	@echo "... scr/tiny_obj_loader.s"
 .PHONY : help
 
 

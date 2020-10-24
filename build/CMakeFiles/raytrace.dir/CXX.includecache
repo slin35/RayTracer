@@ -114,6 +114,18 @@ Object.h
 Hit.h
 /Users/sherry/Documents/473/RayTracer/scr/Hit.h
 
+/Users/sherry/Documents/473/RayTracer/scr/Shape.h
+vector
+-
+string
+-
+iostream
+-
+glm/gtc/type_ptr.hpp
+-
+tiny_obj_loader.h
+/Users/sherry/Documents/473/RayTracer/scr/tiny_obj_loader.h
+
 /Users/sherry/Documents/473/RayTracer/scr/Sphere.h
 vector
 -
@@ -171,6 +183,16 @@ Sphere.h
 /Users/sherry/Documents/473/RayTracer/scr/Sphere.h
 Scene.h
 /Users/sherry/Documents/473/RayTracer/scr/Scene.h
+Shape.h
+/Users/sherry/Documents/473/RayTracer/scr/Shape.h
+
+/Users/sherry/Documents/473/RayTracer/scr/tiny_obj_loader.h
+string
+-
+vector
+-
+map
+-
 
 /Users/sherry/Documents/473/RayTracer/scr/vec3.h
 cmath

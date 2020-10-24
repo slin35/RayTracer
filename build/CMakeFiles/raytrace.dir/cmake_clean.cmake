@@ -1,5 +1,6 @@
 file(REMOVE_RECURSE
   "CMakeFiles/raytrace.dir/scr/main.cpp.o"
+  "CMakeFiles/raytrace.dir/scr/tiny_obj_loader.cpp.o"
   "raytrace"
   "raytrace.pdb"
 )

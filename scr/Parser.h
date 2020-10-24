@@ -212,7 +212,7 @@ class Parser {
 
         // extracting integers of decimals from a srting
         double extractDouble(string& w) {
-            regex target("([-]*[0-9]+[.]*[0-9]*)");
+            regex target("([-]*[0-9]+[.]*[0-9]*[e]*[-]*[0-9]*)");
             smatch match;
 
             input >> w;
