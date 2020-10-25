@@ -3,11 +3,17 @@
 
 #include <vector>
 #include <string>
-#include <iostream>
+#include <limits>
 #include <glm/gtc/type_ptr.hpp>
 
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "tiny_obj_loader.h"
+#include "Object.h"
+#include "Pigment.h"
+#include "Ray.h"
+#include "vec3.h"
+#include "Triangle.h"
+#include "Util.h"
 
 using namespace std;
 
@@ -32,12 +38,76 @@ class Shape {
         glm::vec3 min = glm::vec3(0);
         glm::vec3 max = glm::vec3(0);
 
+        vector<shared_ptr<Triangle>> triangles;
+
+        float tmin;
+        float tmax;
+        vec3 hitNormal;
+        
+
         void initShape(int shapeIdx);
         void measure();
         void resize(glm::vec3 gTrans, float gScale);
-        void setNormals();
+
+
+        bool hitBoundingBox(Ray ray);
+        void addTriangles();
 
 };
+
+bool Shape::hitBoundingBox(Ray ray) {
+    glm::vec3 dir = glm::vec3(ray.direction.x(), ray.direction.y(), ray.direction.z());
+    glm::vec3 eye = glm::vec3(ray.position.x(), ray.position.y(), ray.position.z());
+    glm::vec3 invDir = glm::vec3(1.0/dir.x, 1.0/dir.y, 1.0/dir.z);
+
+    float tymin, tymax, tzmin, tzmax;
+
+    if (dir.x <= 0) {
+        tmin = (max.x - eye.x) * invDir.x;
+        tmax = (min.x - eye.x) * invDir.x;
+    }
+    else {
+        tmin = (min.x - eye.x) * invDir.x;
+        tmax = (max.x - eye.x) * invDir.x;
+    }
+
+    if (dir.y <= 0) {
+        tymin = (max.y - eye.y) * invDir.y;
+        tymax = (min.y - eye.y) * invDir.y;
+    }
+    else {
+        tymin = (min.y - eye.y) * invDir.y;
+        tymax = (max.y - eye.y) * invDir.y;
+    }
+
+    if (tymin > tmin)
+        tmin = tymin;
+    if (tymax < tmax)
+        tmax = tymax;
+
+    if (dir.z <= 0) {
+        tzmin = (max.z - eye.z) * invDir.z;
+        tzmax = (min.z - eye.z) * invDir.z;
+    }
+    else {
+        tzmin = (min.z - eye.z) * invDir.z;
+        tzmax = (max.z - eye.z) * invDir.z;
+    }
+
+    if (tmin > tzmax || tzmin > tmax)
+        return false;
+
+    if (tzmin > tmin)
+        tmin = tzmin;
+    if (tzmax < tmax)
+        tmax = tzmax;
+
+    if (tmin < 0 && tmax < 0) {
+        return false;
+    }
+
+    return true;
+}
 
 void Shape::initShape(int shapeIdx) {
     tinyobj::shape_t shape = TOshapes[shapeIdx];
@@ -46,9 +116,6 @@ void Shape::initShape(int shapeIdx) {
     norBuf = shape.mesh.normals;
     texBuf = shape.mesh.texcoords;
     eleBuf = shape.mesh.indices;
-
-    if (norBuf.size() == 0)
-        setNormals();
 
     measure();
 
@@ -68,6 +135,22 @@ void Shape::initShape(int shapeIdx) {
     resize(gTrans, gScale);
 
     measure();
+
+    addTriangles();
+}
+
+void Shape::addTriangles() {
+    for (size_t idx = 0; idx < eleBuf.size() / 3; idx++) {
+        glm::vec3 v1(posBuf[3 * eleBuf[3 * idx]], posBuf[3 * eleBuf[3 * idx] + 1], posBuf[3 * eleBuf[3 * idx] + 2]);
+        glm::vec3 v2(posBuf[3 * eleBuf[3 * idx + 1]], posBuf[3 * eleBuf[3 * idx + 1] + 1], posBuf[3 * eleBuf[3 * idx + 1] + 2]);
+        glm::vec3 v3(posBuf[3 * eleBuf[3 * idx + 2]], posBuf[3 * eleBuf[3 * idx + 2] + 1], posBuf[3 * eleBuf[3 * idx + 2] + 2]);
+
+        auto triangle = make_shared<Triangle>(v1, v2, v3, min, max);
+
+        triangles.push_back(triangle);
+
+
+    }
 }
 
 void Shape::measure() {
@@ -105,95 +188,3 @@ void Shape::resize(glm::vec3 gTrans, float gScale) {
 		posBuf[3 * v + 2] = (posBuf[3 * v + 2] - gTrans.z) * gScale;
 	}
 }
-
-void Shape::setNormals() {
-	float ax, ay, az, bx, by, bz, cx, cy, cz, nx, ny, nz;
-
-	for (size_t v = 0; v < posBuf.size() / 3; v++) {
-		norBuf.push_back(0);
-		norBuf.push_back(0);
-		norBuf.push_back(0);
-	}
-
-	for (size_t v = 0; v < eleBuf.size() / 3; v++) {
-		ax = posBuf[3 * eleBuf[3 * v]];
-		ay = posBuf[3 * eleBuf[3 * v] + 1];
-		az = posBuf[3 * eleBuf[3 * v] + 2];
-
-		bx = posBuf[3 * eleBuf[3 * v + 1]];
-		by = posBuf[3 * eleBuf[3 * v + 1] + 1];
-		bz = posBuf[3 * eleBuf[3 * v + 1] + 2];
-
-		cx = posBuf[3 * eleBuf[3 * v + 2]];
-		cy = posBuf[3 * eleBuf[3 * v + 2] + 1];
-		cz = posBuf[3 * eleBuf[3 * v + 2] + 2];
-
-		nx = (by - ay)*(cz - az) - (bz - az)*(cy - ay);
-		ny = (bz - az)*(cx - ax) - (bx - ax)*(cz - az);
-		nz = (bx - ax)*(cy - ay) - (by - ay)*(cx - ax);
-
-		norBuf[3 * eleBuf[3 * v]] += nx;
-		norBuf[3 * eleBuf[3 * v] + 1] += ny;
-		norBuf[3 * eleBuf[3 * v] + 2] += nz;
-
-		norBuf[3 * eleBuf[3 * v + 1]] += nx;
-		norBuf[3 * eleBuf[3 * v + 1] + 1] += ny;
-		norBuf[3 * eleBuf[3 * v + 1] + 2] += nz;
-
-		norBuf[3 * eleBuf[3 * v + 2]] += nx;
-		norBuf[3 * eleBuf[3 * v + 2] + 1] += ny;
-		norBuf[3 * eleBuf[3 * v + 2] + 2] += nz;
-	}
-}
-
-/*
-
-
-    public:
-        Shape(string inputfile) {
-            if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, inputfile.c_str())) {
-                throw runtime_error(warn + err);
-            }
-
-        }
-    public:
-        tinyobj::attrib_t attrib;
-        vector<tinyobj::shape_t> shapes;
-        vector<tinyobj::material_t> materials;
-        string warn;
-        string err;
-
-        vector<float> norBuf;
-        vector<float> posBuf;
-        vector<float> texBuf;
-        vector<tinyobj::index_t> eleBuf;
-        vector<glm::vec3> vertices;
-        vector<glm::vec3> normals;
-
-        glm::vec3 min = glm::vec3(0);
-        glm::vec3 max = glm::vec3(0);
-
-        void setup(size_t shapeIdx = 0);
-        void setNormal();
-
-
-void Shape::setup(size_t shapeIdx) {
-    posBuf = attrib.vertices;
-    norBuf = attrib.normals;
-    texBuf = attrib.texcoords;
-
-    for (const auto& shape: shapes) {
-        for (const auto& index : shape.mesh.indices) {
-            eleBuf.push_back(index);     // setup eleBuf (might not be necessary)
-            vertices.push_back(glm::vec3(posBuf[3*index.vertex_index+0], posBuf[3*index.vertex_index+1], posBuf[3*index.vertex_index+2]));
-        }
-    }
-}
-
-void Shape::setNormal() {
-    float ax, ay, az, bx, by, bz, cx, cy,cz, nx, ny, nz;
-
-    norBuf.resize(posBuf.size() / 3);
-}
- */
-

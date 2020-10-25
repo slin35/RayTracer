@@ -13,6 +13,7 @@
 #include "Util.h"
 #include "Object.h"
 #include "Hit.h"
+#include "Shape.h"
 
 using namespace std;
 
@@ -33,6 +34,7 @@ class Scene {
         void addSphere(shared_ptr<Sphere> sphere) {
             spheres.push_back(sphere);
             objects.push_back(sphere);
+            allObjects.push_back(sphere);
         }
 
         void addLight(shared_ptr<Light> light) {
@@ -42,6 +44,12 @@ class Scene {
         void addPlane(shared_ptr<Plane> plane) {
             planes.push_back(plane);
             objects.push_back(plane);
+            allObjects.push_back(plane);
+        }
+
+        void addShape(shared_ptr<Shape> shape) {
+            shapes.push_back(shape);
+            allObjects.insert(allObjects.end(), shape->triangles.begin(), shape->triangles.end());
         }
 
         void render(ostream& out);
@@ -56,7 +64,9 @@ class Scene {
         vector<shared_ptr<Sphere>> spheres;
         vector<shared_ptr<Light>> lights;
         vector<shared_ptr<Plane>> planes;
+        vector<shared_ptr<Shape>> shapes;
         vector<shared_ptr<Object>> objects;
+        vector<shared_ptr<Object>> allObjects;
         Pigment inside{0, 0, 0};
         Pigment outside{0.6, 0.8, 0.3};
         vector<vector<Pigment>> buffer;
@@ -120,8 +130,15 @@ Pigment Scene::traceColor(int x, int y) {
     for (int i = 0; i < numRays; i++) {
         ray = Ray(cameras[0], x + Util::randD(-0.5), y + Util::randD(-0.5), width, height);
 
+        vector<shared_ptr<Object>> objs(objects.begin(), objects.end());
+
+        for (auto shape : shapes) {
+            if (shape->hitBoundingBox(ray)) {
+                objs.insert(objs.end(), shape->triangles.begin(), shape->triangles.end());
+            }
+        } 
         shared_ptr<Object> obj;
-        Hit hit(&objects, ray);
+        Hit hit(&objs, ray);
 
         res = hit.getClosestHit(obj);
 
@@ -129,10 +146,10 @@ Pigment Scene::traceColor(int x, int y) {
             switch (renderMode)
                 {
                 case 0:
-                    color = color + Util::phongMode(&lights, &objects, obj, ray.getCurrentPos(res));
+                    color = color + Util::phongMode(&lights, &objs, &allObjects, obj, ray.getCurrentPos(res));
                     break;
                 case 1:
-                    color = color + Util::foggyMode(ray, &objects, outside, bounces);
+                    color = color + Util::foggyMode(ray, &objs, outside, bounces);
                     break;
                 default:
                     color = color + obj->getColor();

@@ -113,18 +113,32 @@ Object.h
 /Users/sherry/Documents/473/RayTracer/scr/Object.h
 Hit.h
 /Users/sherry/Documents/473/RayTracer/scr/Hit.h
+Shape.h
+/Users/sherry/Documents/473/RayTracer/scr/Shape.h
 
 /Users/sherry/Documents/473/RayTracer/scr/Shape.h
 vector
 -
 string
 -
-iostream
+limits
 -
 glm/gtc/type_ptr.hpp
 -
 tiny_obj_loader.h
 /Users/sherry/Documents/473/RayTracer/scr/tiny_obj_loader.h
+Object.h
+/Users/sherry/Documents/473/RayTracer/scr/Object.h
+Pigment.h
+/Users/sherry/Documents/473/RayTracer/scr/Pigment.h
+Ray.h
+/Users/sherry/Documents/473/RayTracer/scr/Ray.h
+vec3.h
+/Users/sherry/Documents/473/RayTracer/scr/vec3.h
+Triangle.h
+/Users/sherry/Documents/473/RayTracer/scr/Triangle.h
+Util.h
+/Users/sherry/Documents/473/RayTracer/scr/Util.h
 
 /Users/sherry/Documents/473/RayTracer/scr/Sphere.h
 vector
@@ -136,6 +150,18 @@ vec3.h
 Object.h
 /Users/sherry/Documents/473/RayTracer/scr/Object.h
 
+/Users/sherry/Documents/473/RayTracer/scr/Triangle.h
+glm/gtc/type_ptr.hpp
+-
+Object.h
+/Users/sherry/Documents/473/RayTracer/scr/Object.h
+vec3.h
+/Users/sherry/Documents/473/RayTracer/scr/vec3.h
+Ray.h
+/Users/sherry/Documents/473/RayTracer/scr/Ray.h
+Util.h
+/Users/sherry/Documents/473/RayTracer/scr/Util.h
+
 /Users/sherry/Documents/473/RayTracer/scr/Util.h
 stdlib.h
 -
@@ -146,6 +172,8 @@ algorithm
 limits.h
 -
 math.h
+-
+glm/gtc/type_ptr.hpp
 -
 Pigment.h
 /Users/sherry/Documents/473/RayTracer/scr/Pigment.h

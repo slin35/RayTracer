@@ -13,6 +13,7 @@ CMakeFiles/raytrace.dir/scr/main.cpp.o
  /Users/sherry/Documents/473/RayTracer/scr/Scene.h
  /Users/sherry/Documents/473/RayTracer/scr/Shape.h
  /Users/sherry/Documents/473/RayTracer/scr/Sphere.h
+ /Users/sherry/Documents/473/RayTracer/scr/Triangle.h
  /Users/sherry/Documents/473/RayTracer/scr/Util.h
  /Users/sherry/Documents/473/RayTracer/scr/main.cpp
  /Users/sherry/Documents/473/RayTracer/scr/tiny_obj_loader.h

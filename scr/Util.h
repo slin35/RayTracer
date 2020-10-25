@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <limits.h>
 #include <math.h>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "Pigment.h"
 #include "vec3.h"
@@ -25,13 +26,21 @@ class Util {
         static double randD(double val);
         static double phongDiffuse(double Kd, vec3 normal, vec3 light);
         static double max(double a, double b) { return a > b ? a : b; }
-        static Pigment phongMode(vector<shared_ptr<Light>>* lights, vector<shared_ptr<Object>>* objects, shared_ptr<Object> o, vec3 curPos);
+        static Pigment phongMode(vector<shared_ptr<Light>>* lights, vector<shared_ptr<Object>>* objects, vector<shared_ptr<Object>>* objects2, shared_ptr<Object> o, vec3 curPos);
         static Pigment foggyMode(Ray ray, vector<shared_ptr<Object>>* objects, Pigment background, int bounces);
         static void gammaEncoder(Pigment& p, double gamma);
+        static double detMatrix(glm::vec3 col1, glm::vec3 col2, glm::vec3 col3);
 
     private:
         static bool inUnitSphere(vec3 pos);
 };
+
+
+double Util::detMatrix(glm::vec3 col1, glm::vec3 col2, glm::vec3 col3) {
+    return col1.x * (col2.y * col3.z - col3.y * col2.z)
+            - col2.x * (col1.y * col3.z - col3.y * col1.z)
+            + col3.x * (col1.y * col2.z - col2.y * col1.z);
+}
 
 // generating a random float in range 0 - 1 with a shift default to 0
 double Util::randD(double val = 0) {
@@ -46,7 +55,7 @@ double Util::phongDiffuse(double Kd, vec3 normal, vec3 light) {
 }
 
 // returning phong diffuse color with shadow feeler for any given geometry
-Pigment Util::phongMode(vector<shared_ptr<Light>>* lights, vector<shared_ptr<Object>>* objects, shared_ptr<Object> o, vec3 curPos) {
+Pigment Util::phongMode(vector<shared_ptr<Light>>* lights, vector<shared_ptr<Object>>* objects, vector<shared_ptr<Object>>* objects2, shared_ptr<Object> o, vec3 curPos) {
     Pigment color, shadow;
     vec3 l, n;
     Ray shadowFeeler;
@@ -56,7 +65,7 @@ Pigment Util::phongMode(vector<shared_ptr<Light>>* lights, vector<shared_ptr<Obj
         l = light->getPosition() - curPos;
         n = o->getN(curPos);
         shadowFeeler = Ray(curPos, l);
-        res = o->inShadow(shadowFeeler, objects, o);
+        res = o->inShadow(shadowFeeler, objects2, o);
 
         if (res > 0) {
             color = color + Pigment(0, 0, 0.02);

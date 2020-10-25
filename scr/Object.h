@@ -17,7 +17,7 @@ class Object {
 
 // check if the given geometry is in shadow
 double Object::inShadow(Ray ray, vector<shared_ptr<Object>>* objects, shared_ptr<Object> object) {
-    double bias = 0.001;  // fixing shadow acne
+    double bias = 0.0001;  // fixing shadow acne
     double res;
 
     for (auto o : *objects) {

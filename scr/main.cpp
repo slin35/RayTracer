@@ -36,9 +36,11 @@ int main(int argc, char *argv[]) {
 		bounces = stoi(argv[7]);
 
 
-		shared_ptr<Shape> shape = make_shared<Shape>("../resources/bunny.obj");
+		shared_ptr<Shape> shape = make_shared<Shape>("../resources/icoNoNormals.obj");
 
 		shape->initShape(0);
+
+		cout << shape->triangles.size() << endl;
 
 
 		if (inFile) {
@@ -52,6 +54,8 @@ int main(int argc, char *argv[]) {
   			auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
 			if (DEBUG)
 				cout << "parsing time " << elapsed.count() * 1e-9 << endl;
+
+			scene.addShape(shape);
 
 			if (outFile) {
 				begin = std::chrono::high_resolution_clock::now();
