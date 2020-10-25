@@ -17,6 +17,7 @@ using namespace std;
 
 int main(int argc, char *argv[]) {
 	int width, height, shadingModel, numRays, bounces;
+	string objFile;
 	ifstream inFile;
 	ofstream outFile;
 
@@ -36,13 +37,6 @@ int main(int argc, char *argv[]) {
 		bounces = stoi(argv[7]);
 
 
-		shared_ptr<Shape> shape = make_shared<Shape>("../resources/icoNoNormals.obj");
-
-		shape->initShape(0);
-
-		cout << shape->triangles.size() << endl;
-
-
 		if (inFile) {
 			Scene scene(width, height, shadingModel, numRays, bounces);
 			auto begin = std::chrono::high_resolution_clock::now();
@@ -55,7 +49,16 @@ int main(int argc, char *argv[]) {
 			if (DEBUG)
 				cout << "parsing time " << elapsed.count() * 1e-9 << endl;
 
-			scene.addShape(shape);
+			if (argc == 9) {
+				objFile = argv[8];
+				shared_ptr<Shape> shape = make_shared<Shape>(objFile);
+
+				for (int i = 0; i < shape->TOshapes.size(); i++) {
+					shape->initShape(i);
+					scene.addShape(shape);
+				}
+
+			}
 
 			if (outFile) {
 				begin = std::chrono::high_resolution_clock::now();

@@ -1,6 +1,8 @@
 #pragma once
 
 #include <vector>
+#include <iostream> 
+
 
 #include "Pigment.h"
 #include "vec3.h"
@@ -19,19 +21,28 @@ class Sphere : public Object {
         void setCenter(vec3 center) { this->center = center; }
         void setRadius(double raidus) { this->radius = raidus; }
         void setPigment(vec3 pigment) { this->pigment.setPigment(pigment); }
+        void setFuzzy(double fuzzy) { 
+            this->fuzzy = fuzzy; 
+            this->type = 1;
+        }
 
         vec3 getCenter() const { return center; }
         double getRadius() const { return radius; }
         Pigment getpigment() const { return pigment; }
 
+        virtual double getFuzzy() { return fuzzy; }
+
         virtual double hit(Ray ray);
         virtual Pigment getColor() { return pigment; }
         virtual vec3 getN(vec3 curPos = vec3(0, 0, 0));
+        virtual int getSurfaceType() { return type; }
 
     private:
         vec3 center;
         double radius = 0;
         Pigment pigment{0.0f, 0.0f, 0.0f};
+        double fuzzy = 0;
+        int type = 0;
 
 };
 

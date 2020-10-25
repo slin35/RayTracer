@@ -94,17 +94,27 @@ Pigment Util::foggyMode(Ray ray, vector<shared_ptr<Object>>* objects, Pigment ba
     res = hit.getClosestHit(obj);
 
     if (hit.isHit()) {
+        vec3 position = ray.getCurrentPos(res);
+        vec3 normal = obj->getN(position);
+        normal.normalize();
+
         vec3 s = vec3(Util::randD(-0.5) * 2, Util::randD(-0.5) * 2, Util::randD(-0.5) * 2);
         while (!inUnitSphere(s))
             s = vec3(Util::randD(-0.5) * 2, Util::randD(-0.5) * 2, Util::randD(-0.5) * 2);
-        vec3 position = ray.getCurrentPos(res);
-        vec3 normal = obj->getN(position);
 
-        normal.normalize();
+        Ray scatterRay;
 
-        vec3 direction = normal + s + offset;
+        if (obj->getSurfaceType() == 0) {
+            vec3 direction = normal + s + offset;
+            scatterRay = Ray(position, direction);
+        }
+        else if (obj->getSurfaceType() == 1) {
+            vec3 direction = ray.direction;
+            direction.normalize();
 
-        Ray scatterRay = Ray(position, direction);
+            vec3 R = direction - normal * direction.dot(normal) * 2;
+            scatterRay = Ray(position, R + s * obj->getFuzzy());
+        }
 
         return obj->getColor() * foggyMode(scatterRay, objects, background, bounces - 1);
     }

@@ -143,6 +143,8 @@ Util.h
 /Users/sherry/Documents/473/RayTracer/scr/Sphere.h
 vector
 -
+iostream
+-
 Pigment.h
 /Users/sherry/Documents/473/RayTracer/scr/Pigment.h
 vec3.h

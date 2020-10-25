@@ -11,7 +11,9 @@ class Object {
         virtual double hit(Ray ray) = 0;
         virtual double inShadow(Ray ray, vector<shared_ptr<Object>>* objects, shared_ptr<Object> object);
         virtual Pigment getColor() = 0;
+        virtual double getFuzzy() { return 0; }
         virtual vec3 getN(vec3 curPos = vec3(0, 0, 0)) = 0;
+        virtual int getSurfaceType() { return 0; }
 
 };
 

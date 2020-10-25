@@ -103,6 +103,7 @@ class Parser {
         // parse sphere data and add it to the list of geometries in the scene
         void parseSphere() {
             string w;
+            char c;
             vec3 tmp;
             auto sphere = make_shared<Sphere>();
 
@@ -134,6 +135,21 @@ class Parser {
                         }
                     }
                 }
+
+                input >> w;
+                if (w.compare(END) == 0) {
+                    break;
+                }
+                if (w.compare("finish") == 0) {
+                    input >> c;
+                    input >> w;
+                    if (w.compare("reflection") == 0) {
+                        sphere->setFuzzy(extractDouble(w));
+                    }
+                }
+
+
+
                 
             }
             scene.addSphere(sphere);
