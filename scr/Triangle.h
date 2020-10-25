@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glm/gtc/type_ptr.hpp>
+#include <iostream>
 
 #include "Object.h"
 #include "vec3.h"
@@ -15,6 +16,11 @@ class Triangle : public Object {
             normal = cross(b - a, c - a);
             normalize(normal);
         }
+
+        friend ostream& operator<<(ostream& os, const Triangle& tri) {
+			os << "<" << tri.a.x << ", " << tri.a.y << ", " << tri.a.z << ">  " << "<" << tri.b.x << ", " << tri.b.y << ", " << tri.b.z << "> "<< "<" << tri.c.x << ", " << tri.c.y << ", " << tri.c.z << "> ";
+			return os;
+		}
 
     public:
         glm::vec3 a;

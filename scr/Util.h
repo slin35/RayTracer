@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <iterator>
 #include <algorithm>
-#include <limits.h>
+#include <limits>
 #include <math.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
@@ -84,7 +84,7 @@ Pigment Util::phongMode(vector<shared_ptr<Light>>* lights, vector<shared_ptr<Obj
 Pigment Util::foggyMode(Ray ray, vector<shared_ptr<Object>>* objects, Pigment background, int bounces) {
     Pigment color;
     double res;
-    double offset = 0.001;
+    double offset = 0;
     Hit hit(objects, ray);
     shared_ptr<Object> obj;
 
@@ -108,15 +108,22 @@ Pigment Util::foggyMode(Ray ray, vector<shared_ptr<Object>>* objects, Pigment ba
         if (obj->getSurfaceType() == 0) {    // diffuse
             vec3 direction = normal + s + offset;
             scatterRay = Ray(position, direction);
-           
         }
         else if (obj->getSurfaceType() == 1) {   // reflection
-            vec3 direction = ray.direction;
+            if (obj->getFuzzy() >= 1.0f)
+                scatterRay = Ray(position, normal + s);
+            else {
+                vec3 direction = ray.direction;
+                direction.normalize();
+
+                vec3 R = direction - normal * direction.dot(normal) * 2;
+                scatterRay = Ray(position, R + s * obj->getFuzzy());
+            }
+        /*    vec3 direction = ray.direction;
             direction.normalize();
 
             vec3 R = direction - normal * direction.dot(normal) * 2;
-            scatterRay = Ray(position, R + s * obj->getFuzzy());
-
+            scatterRay = Ray(position, R + s * obj->getFuzzy()); */
         }
         else if (obj->getSurfaceType() == 2) {    // emissive
             return obj->getColor();

@@ -133,7 +133,6 @@ void Shape::initShape(int shapeIdx) {
     }
 
     resize(gTrans, gScale);
-
     measure();
 
     addTriangles();

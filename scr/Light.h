@@ -1,10 +1,15 @@
 #pragma once
 
+#include <algorithm>
+#include <iostream>
+
 #include "vec3.h"
 #include "Pigment.h"
 #include "Object.h"
 #include "Ray.h"
 
+
+using namespace std;
 
 class Light : public Object {
     public:
@@ -42,50 +47,51 @@ double Light::hit(Ray ray) {
     double t;
     vec3 curPos;
 
-    if (position.y() != 0) {
+    ray.direction.normalize();
+
+    if (v1.x() == 0 && v2.x() == 0) {  // YZ plane
+        t = (position.x() - ray.position.x()) / ray.direction.x();
+
+        curPos = ray.getCurrentPos(t);
+
+        double y0 = position.y() - v1.y() * 0.5;
+        double y1 = position.y() + v1.y() * 0.5;
+        double z0 = position.z() - v2.y() * 0.5;
+        double z1 = position.z() + v2.z() * 0.5;
+
+        if (curPos.y() < y0 || curPos.y() > y1 || curPos.z() < z0 || curPos.z() > z1) {
+            return -1;
+        }
+    }
+    else if (v1.y() == 0 && v2.y() == 0) {  // XZ plane
         t = (position.y() - ray.position.y()) / ray.direction.y();
 
         curPos = ray.getCurrentPos(t);
 
-        double x0 = position.x() - v1.x() * 0.5 - v2.x() * 0.5;
-        double x1 = position.x() + v1.x() * 0.5 + v2.x() * 0.5;
-        double z0 = position.z() - v1.z() * 0.5 - v2.z() * 0.5;
-        double z1 = position.z() + v1.z() * 0.5 + v2.z() * 0.5;
+        double x0 = position.x() - v1.x() * 0.5;
+        double x1 = position.x() + v1.x() * 0.5;
+        double z0 = position.z() - v2.z() * 0.5;
+        double z1 = position.z() + v2.z() * 0.5;
 
         if (curPos.x() < x0 || curPos.x() > x1 || curPos.z() < z0 || curPos.z() > z1) {
             return -1;
         }
     }
-    if (position.x() != 0) {
-        t = (position.x() - ray.position.x()) / ray.direction.x();
-
-        curPos = ray.getCurrentPos(t);
-
-        double y0 = position.y() - v1.y() * 0.5 - v2.y() * 0.5;
-        double y1 = position.y() + v1.y() * 0.5 + v2.y() * 0.5;
-        double z0 = position.z() - v1.z() * 0.5 - v2.y() * 0.5;
-        double z1 = position.z() + v1.z() * 0.5 + v2.z() * 0.5;
-
-        if (curPos.y() < y0 || curPos.y() > y1 || curPos.z() < z0 || curPos.z() > z1) {
-            return -1;
-        }
-
-    }
-    if (position.z() != 0) {
+    else if (v1.z() == 0 && v2.z() == 0) {  // XY plane
         t = (position.z() - ray.position.z()) / ray.direction.z();
 
         curPos = ray.getCurrentPos(t);
 
-        double x0 = position.x() - v1.x() * 0.5 - v2.x() * 0.5;
-        double x1 = position.x() + v1.x() * 0.5 + v2.x() * 0.5;
-        double y0 = position.y() - v1.y() * 0.5 - v2.y() * 0.5;
-        double y1 = position.y() + v1.y() * 0.5 + v2.y() * 0.5;
+        double x0 = position.x() - v1.x() * 0.5;
+        double x1 = position.x() + v1.x() * 0.5;
+        double y0 = position.y() - v2.y() * 0.5;
+        double y1 = position.y() + v2.y() * 0.5;
 
         if (curPos.x() < x0 || curPos.x() > x1 || curPos.y() < y0 || curPos.y() > y1) {
             return -1;
         }
     }
-
+    
     return t;
 }
 

@@ -25,6 +25,10 @@ Ray.h
 /Users/sherry/Documents/473/RayTracer/scr/Ray.h
 
 /Users/sherry/Documents/473/RayTracer/scr/Light.h
+algorithm
+-
+iostream
+-
 vec3.h
 /Users/sherry/Documents/473/RayTracer/scr/vec3.h
 Pigment.h
@@ -161,6 +165,8 @@ Object.h
 /Users/sherry/Documents/473/RayTracer/scr/Triangle.h
 glm/gtc/type_ptr.hpp
 -
+iostream
+-
 Object.h
 /Users/sherry/Documents/473/RayTracer/scr/Object.h
 vec3.h
@@ -177,7 +183,7 @@ iterator
 -
 algorithm
 -
-limits.h
+limits
 -
 math.h
 -

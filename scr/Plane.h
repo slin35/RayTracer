@@ -39,7 +39,7 @@ double Plane::hit(Ray ray) {
     n.normalize();
     dir.normalize();
 
-    return (distance - ray.position.dot(n)) / (dir.dot(n));
+    return (distance - ray.position.dot(n)) / n.dot(ray.direction);
 }
 
 vec3 Plane::getN(vec3 curPos) {
