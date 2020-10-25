@@ -177,11 +177,33 @@ class Parser {
                     if (w.compare("rgb") == 0) {
                         tmp.setX(extractDouble(w));
                         tmp.setY(extractDouble(w));
-                        tmp.setZ(extractDouble(w));
-
+                        while (input >> c && c != '>') {
+                            w += c;
+                        }
+                        tmp.setZ(stod(w));
                         light->setPigment(tmp);
-                        break;
                     }
+                }
+
+                input >> c;
+                if (c != '}') {
+                    input >> w;
+                    w = c + w;
+                    if (w.compare("area_light") == 0) {
+                        tmp.setX(extractDouble(w));
+                        tmp.setY(extractDouble(w));
+                        tmp.setZ(extractDouble(w));
+                        light->setV1(tmp);
+
+                        tmp.setX(extractDouble(w));
+                        tmp.setY(extractDouble(w));
+                        tmp.setZ(extractDouble(w));
+                        light->setV2(tmp);
+                        
+                    }
+                }
+                else {
+                    break;
                 }
             }
 

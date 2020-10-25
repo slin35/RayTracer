@@ -29,6 +29,10 @@ vec3.h
 /Users/sherry/Documents/473/RayTracer/scr/vec3.h
 Pigment.h
 /Users/sherry/Documents/473/RayTracer/scr/Pigment.h
+Object.h
+/Users/sherry/Documents/473/RayTracer/scr/Object.h
+Ray.h
+/Users/sherry/Documents/473/RayTracer/scr/Ray.h
 
 /Users/sherry/Documents/473/RayTracer/scr/Object.h
 Ray.h
@@ -92,6 +96,8 @@ Camera.h
 vector
 -
 iterator
+-
+iostream
 -
 algorithm
 -
@@ -176,6 +182,8 @@ limits.h
 math.h
 -
 glm/gtc/type_ptr.hpp
+-
+iostream
 -
 Pigment.h
 /Users/sherry/Documents/473/RayTracer/scr/Pigment.h

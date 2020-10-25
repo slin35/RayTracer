@@ -6,6 +6,7 @@
 #include <limits.h>
 #include <math.h>
 #include <glm/gtc/type_ptr.hpp>
+#include <iostream>
 
 #include "Pigment.h"
 #include "vec3.h"
@@ -104,16 +105,21 @@ Pigment Util::foggyMode(Ray ray, vector<shared_ptr<Object>>* objects, Pigment ba
 
         Ray scatterRay;
 
-        if (obj->getSurfaceType() == 0) {
+        if (obj->getSurfaceType() == 0) {    // diffuse
             vec3 direction = normal + s + offset;
             scatterRay = Ray(position, direction);
+           
         }
-        else if (obj->getSurfaceType() == 1) {
+        else if (obj->getSurfaceType() == 1) {   // reflection
             vec3 direction = ray.direction;
             direction.normalize();
 
             vec3 R = direction - normal * direction.dot(normal) * 2;
             scatterRay = Ray(position, R + s * obj->getFuzzy());
+
+        }
+        else if (obj->getSurfaceType() == 2) {    // emissive
+            return obj->getColor();
         }
 
         return obj->getColor() * foggyMode(scatterRay, objects, background, bounces - 1);

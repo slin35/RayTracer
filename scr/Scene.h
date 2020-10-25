@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <iterator>
+#include <iostream>
 #include <algorithm>
 
 #include "Camera.h"
@@ -39,6 +40,10 @@ class Scene {
 
         void addLight(shared_ptr<Light> light) {
             lights.push_back(light);
+            if (light->isAreaLight()) {
+                objects.push_back(light);
+                areaLight = true;
+            }
         }
 
         void addPlane(shared_ptr<Plane> plane) {
@@ -60,6 +65,7 @@ class Scene {
         int renderMode;
         int numRays;
         int bounces;
+        bool areaLight = false;
         vector<shared_ptr<Camera>> cameras;
         vector<shared_ptr<Sphere>> spheres;
         vector<shared_ptr<Light>> lights;
@@ -117,7 +123,7 @@ void Scene::writeOutPixel(ostream& out, int xpos, int ypos, Pigment color, bool 
     Util::gammaEncoder(color, 2);
     color = color * 255 * d;
     
-    out << (int)color.r << " " << (int)color.g << " " << (int)color.b << " ";
+    out << min((int)color.r, 255) << " " << min((int)color.g, 255) << " " << min((int)color.b, 255) << " ";
 }
 
 
@@ -126,6 +132,9 @@ Pigment Scene::traceColor(int x, int y) {
     Ray ray;
     double res;
 
+    if (areaLight) {
+        outside = Pigment{0, 0, 0};
+    }
     // for every pixel generate rays with position(x +/- 0.5, y +/- 0.5)
     for (int i = 0; i < numRays; i++) {
         ray = Ray(cameras[0], x + Util::randD(-0.5), y + Util::randD(-0.5), width, height);

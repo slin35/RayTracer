@@ -41,7 +41,6 @@ int main(int argc, char *argv[]) {
 			Scene scene(width, height, shadingModel, numRays, bounces);
 			auto begin = std::chrono::high_resolution_clock::now();
 			
-
 			Parser p(inFile, scene);
 
 			auto end = std::chrono::high_resolution_clock::now();
