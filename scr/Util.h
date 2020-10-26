@@ -119,11 +119,6 @@ Pigment Util::foggyMode(Ray ray, vector<shared_ptr<Object>>* objects, Pigment ba
                 scatterRay = Ray(position, R + s * obj->getFuzzy());
             
             }
-        /*    vec3 direction = ray.direction;
-            direction.normalize();
-
-            vec3 R = direction - normal * direction.dot(normal) * 2;
-            scatterRay = Ray(position, R + s * obj->getFuzzy()); */
         }
         else if (obj->getSurfaceType() == 2) {    // emissive
             return obj->getColor();
