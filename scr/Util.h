@@ -34,6 +34,7 @@ class Util {
 
     private:
         static bool inUnitSphere(vec3 pos);
+        static vec3 getPointInUnitSphere();
 };
 
 
@@ -99,9 +100,7 @@ Pigment Util::foggyMode(Ray ray, vector<shared_ptr<Object>>* objects, Pigment ba
         vec3 normal = obj->getN(position);
         normal.normalize();
 
-        vec3 s = vec3(Util::randD(-0.5) * 2, Util::randD(-0.5) * 2, Util::randD(-0.5) * 2);
-        while (!inUnitSphere(s))
-            s = vec3(Util::randD(-0.5) * 2, Util::randD(-0.5) * 2, Util::randD(-0.5) * 2);
+        vec3 s = getPointInUnitSphere();
 
         Ray scatterRay;
 
@@ -118,6 +117,7 @@ Pigment Util::foggyMode(Ray ray, vector<shared_ptr<Object>>* objects, Pigment ba
 
                 vec3 R = direction - normal * direction.dot(normal) * 2;
                 scatterRay = Ray(position, R + s * obj->getFuzzy());
+            
             }
         /*    vec3 direction = ray.direction;
             direction.normalize();
@@ -144,4 +144,12 @@ bool Util::inUnitSphere(vec3 pos) {
 // encode the color with a gamma value
 void Util::gammaEncoder(Pigment& p, double gamma = 2.2) {
     p = p^(1/gamma);
+}
+
+vec3 Util::getPointInUnitSphere() {
+    vec3 s;
+    do {
+        s = vec3(Util::randD(-0.5) * 2, Util::randD(-0.5) * 2, Util::randD(-0.5) * 2);
+    }  while (!inUnitSphere(s));
+    return s;
 }

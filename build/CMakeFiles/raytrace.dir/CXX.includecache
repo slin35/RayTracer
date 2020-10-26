@@ -155,6 +155,8 @@ vector
 -
 iostream
 -
+algorithm
+-
 Pigment.h
 /Users/sherry/Documents/473/RayTracer/scr/Pigment.h
 vec3.h

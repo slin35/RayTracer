@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <iostream> 
+#include <algorithm>
 
 
 #include "Pigment.h"
@@ -49,22 +50,25 @@ class Sphere : public Object {
 // returns the t value along the ray direction intersecting the sphere
 double Sphere::hit(Ray ray) {
     vec3 e = ray.position;
-    vec3 c = center;
     vec3 d = ray.direction;
-
-    d.normalize();
     double r = radius;
-    double discriminant = pow(d.dot(e - c),2) - d.dot(d) * ((e - c).dot(e - c) - pow(r, 2));
+
+    double a = d.dot(d), b = 2 * d.dot(e - center), c = (e - center).dot(e - center) - r * r;
+    
+    double discriminant = b * b - 4 * a * c;
+
     
     if (discriminant < 0)
         return -1;
 
-    double t1 = d.dot(e - c) * -1 + sqrt(discriminant) / d.dot(d);
-	double t2 = d.dot(e - c) * -1 - sqrt(discriminant) / d.dot(d);
+    double t1 = max((-b + sqrt(discriminant))/2/a, 0.0);
+    double t2 = max((-b - sqrt(discriminant))/2/a, 0.0);
 
-    return t1 < t2 ? t1 : t2;
+    return min(t1, t2);
 }
 
 vec3 Sphere::getN(vec3 curPos) {
-    return curPos - center;
+    vec3 normal = curPos - center;
+    normal.normalize();
+    return normal;
 }
