@@ -18,13 +18,19 @@ real    22m49.854s
 user    177m35.981s
 sys     0m9.879s
 --------------------------------------------------------------------
-p3_simp.pv with phong mode = 0, aa = 20, depth = 50, and bunny.obj
+p3_e4.pov with foggy mode = 1, aa = 100, depth = 50
+
+real    2m53.571s
+user    22m40.561s
+sys     0m1.912s
+--------------------------------------------------------------------
+p3_simp.pov with phong mode = 0, aa = 20, depth = 50, and bunny.obj
 
 real    2m14.139s
 user    17m7.031s
 sys     0m1.562s
 --------------------------------------------------------------------
-p3_simp.pv with phong mode = 0, aa = 100, depth = 50, and icoNoNormals.obj
+p3_simp.pov with phong mode = 0, aa = 100, depth = 50, and icoNoNormals.obj
 
 real    0m17.246s
 user    2m4.562s
