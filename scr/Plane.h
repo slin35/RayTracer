@@ -19,15 +19,22 @@ class Plane : public Object {
         void setNormal(vec3 normal) { this->normal = normal; }
         void setDistance(double distance) { this->distance = distance; }
         void setPigment(vec3 pigment) { this->pigment.setPigment(pigment); }
-    
+        void setFuzzy(double fuzzy) { 
+            this->fuzzy = fuzzy; 
+            this->type = 1;
+        }
         virtual double hit(Ray ray);
         virtual Pigment getColor() { return pigment; }
         virtual vec3 getN(vec3 curPos = vec3(0, 0, 0));
+        virtual int getSurfaceType() { return type; }
+        virtual double getFuzzy() { return fuzzy; };
 
     private:
         vec3 normal;
         double distance;
         Pigment pigment;
+        double fuzzy = 0;
+        int type = 0;
 
 };
 

@@ -239,10 +239,21 @@ class Parser {
                             tmp.setZ(extractDouble(w));
 
                             plane->setPigment(tmp);
-                            break;
                         }
                     }
                     
+                }
+
+                input >> w;
+                if (w.compare("}") == 0) {
+                    break;
+                }
+                else if (w.compare("finish") == 0) {
+                    input >> c;
+                    input >> w;
+                    if (w.compare("reflection") == 0) {
+                        plane->setFuzzy(extractDouble(w));
+                    }
                 }
             }
             scene.addPlane(plane);

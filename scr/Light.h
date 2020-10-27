@@ -56,7 +56,7 @@ double Light::hit(Ray ray) {
 
         double y0 = position.y() - v1.y() * 0.5;
         double y1 = position.y() + v1.y() * 0.5;
-        double z0 = position.z() - v2.y() * 0.5;
+        double z0 = position.z() - v2.z() * 0.5;
         double z1 = position.z() + v2.z() * 0.5;
 
         if (curPos.y() < y0 || curPos.y() > y1 || curPos.z() < z0 || curPos.z() > z1) {

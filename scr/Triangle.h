@@ -35,7 +35,7 @@ class Triangle : public Object {
         glm::vec3 max;
 
         virtual double hit(Ray ray);
-        virtual Pigment getColor() { return Pigment(0.6, 0.6, 0.9); }
+        virtual Pigment getColor() { return Pigment(0.6, 0.6, 0.8); }
         virtual vec3 getN(vec3 curPos = vec3(0, 0, 0));
 
 };
