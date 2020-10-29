@@ -29,7 +29,7 @@ class Hit {
                 }
             }
 
-            return minHit;
+            return anyHits ? minHit : -1;
         }
 
         bool isHit() { return anyHits; }

@@ -14,10 +14,11 @@
 #include "vec3.h"
 #include "Triangle.h"
 #include "Util.h"
+#include "Object.h"
 
 using namespace std;
 
-class Shape {
+class Shape : public Object {
     public:
         Shape(string inputFile) {
             if (!tinyobj::LoadObj(TOshapes, objMaterials, err, inputFile.c_str())) {
@@ -40,8 +41,8 @@ class Shape {
 
         vector<shared_ptr<Triangle>> triangles;
 
-        float tmin;
-        float tmax;
+        float tmin = 0;
+        float tmax = 0;
         vec3 hitNormal;
         
 
@@ -53,7 +54,31 @@ class Shape {
         bool hitBoundingBox(Ray ray);
         void addTriangles();
 
+        virtual double hit(Ray ray);
+        virtual Pigment getColor() { return Pigment(0.6, 0.6, 0.8); }
+        virtual vec3 getN(vec3 curPos = vec3(0, 0, 0));
+
 };
+
+double Shape::hit(Ray ray) {
+    if (hitBoundingBox(ray)) {
+        vector<shared_ptr<Object>> objs(triangles.begin(), triangles.end());
+        shared_ptr<Object> hitObj;
+        Hit hit(&objs, ray);
+
+        double res = hit.getClosestHit(hitObj);
+        if (res >= 0) {
+            hitNormal = hitObj->getN();
+        }
+        return res;
+
+    }
+    return -1;
+}
+
+vec3 Shape::getN(vec3 curPos) {
+    return hitNormal;
+}
 
 bool Shape::hitBoundingBox(Ray ray) {
     glm::vec3 dir = glm::vec3(ray.direction.x(), ray.direction.y(), ray.direction.z());

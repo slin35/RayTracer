@@ -54,6 +54,7 @@ class Scene {
 
         void addShape(shared_ptr<Shape> shape) {
             shapes.push_back(shape);
+            objects.push_back(shape);
             allObjects.insert(allObjects.end(), shape->triangles.begin(), shape->triangles.end());
         }
 
@@ -93,8 +94,9 @@ void Scene::render(ostream& out) {
     if (lights.size() == 0 && renderMode == 0)
         renderMode = -1;
 
-    #pragma omp parallel for num_threads(50)
+//    #pragma omp parallel for num_threads(50)
     for (int y = height - 1; y >= 0; y--) {
+        cerr << "\r rows remaining:" << y << " " << flush;
         for (int x = 0; x < width; x++) {
             buffer[x][y] = traceColor(x, y);
         }
@@ -139,15 +141,8 @@ Pigment Scene::traceColor(int x, int y) {
     for (int i = 0; i < numRays; i++) {
         ray = Ray(cameras[0], x + Util::randD(-0.5), y + Util::randD(-0.5), width, height);
 
-        vector<shared_ptr<Object>> objs(objects.begin(), objects.end());
-
-        for (auto shape : shapes) {
-            if (shape->hitBoundingBox(ray)) {
-                objs.insert(objs.end(), shape->triangles.begin(), shape->triangles.end());
-            }
-        } 
         shared_ptr<Object> obj;
-        Hit hit(&objs, ray);
+        Hit hit(&objects, ray);
 
         res = hit.getClosestHit(obj);
 
@@ -155,10 +150,10 @@ Pigment Scene::traceColor(int x, int y) {
             switch (renderMode)
                 {
                 case 0:
-                    color = color + Util::phongMode(&lights, &objs, &allObjects, obj, ray.getCurrentPos(res));
+                    color = color + Util::phongMode(&lights, &objects, &allObjects, obj, ray.getCurrentPos(res));
                     break;
                 case 1:
-                    color = color + Util::foggyMode(ray, &objs, outside, bounces);
+                    color = color + Util::foggyMode(ray, &objects, outside, bounces);
                     break;
                 default:
                     color = color + obj->getColor();
@@ -176,7 +171,7 @@ Pigment Scene::traceColor(int x, int y) {
 
 void Scene::renderBuffer(ostream& out) {
     for (int y = height - 1; y >= 0; y--) {
-        cerr << "\r rows remaining:" << y << " " << flush;
+        
         for (int x = 0; x < width; x++) {
             writeOutPixel(out, x, y, buffer[x][y], false);
         }
