@@ -1,3 +1,0 @@
-/Users/sherry/Documents/473/RayTracer/build/CMakeFiles/rebuild_cache.dir
-/Users/sherry/Documents/473/RayTracer/build/CMakeFiles/edit_cache.dir
-/Users/sherry/Documents/473/RayTracer/build/CMakeFiles/raytrace.dir
