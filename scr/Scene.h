@@ -35,7 +35,6 @@ class Scene {
         void addSphere(shared_ptr<Sphere> sphere) {
             spheres.push_back(sphere);
             objects.push_back(sphere);
-            allObjects.push_back(sphere);
         }
 
         void addLight(shared_ptr<Light> light) {
@@ -49,13 +48,11 @@ class Scene {
         void addPlane(shared_ptr<Plane> plane) {
             planes.push_back(plane);
             objects.push_back(plane);
-            allObjects.push_back(plane);
         }
 
         void addShape(shared_ptr<Shape> shape) {
             shapes.push_back(shape);
             objects.push_back(shape);
-            allObjects.insert(allObjects.end(), shape->triangles.begin(), shape->triangles.end());
         }
 
         void render(ostream& out);
@@ -73,7 +70,6 @@ class Scene {
         vector<shared_ptr<Plane>> planes;
         vector<shared_ptr<Shape>> shapes;
         vector<shared_ptr<Object>> objects;
-        vector<shared_ptr<Object>> allObjects;
         Pigment inside{0, 0, 0};
         Pigment outside{0.6, 0.8, 0.3};
         vector<vector<Pigment>> buffer;
@@ -94,9 +90,9 @@ void Scene::render(ostream& out) {
     if (lights.size() == 0 && renderMode == 0)
         renderMode = -1;
 
-//    #pragma omp parallel for num_threads(50)
+    #pragma omp parallel for num_threads(2)
     for (int y = height - 1; y >= 0; y--) {
-        cerr << "\r rows remaining:" << y << " " << flush;
+        cerr << "\r rows remaining:  " << y << "            " << flush;
         for (int x = 0; x < width; x++) {
             buffer[x][y] = traceColor(x, y);
         }
@@ -150,7 +146,7 @@ Pigment Scene::traceColor(int x, int y) {
             switch (renderMode)
                 {
                 case 0:
-                    color = color + Util::phongMode(&lights, &objects, &allObjects, obj, ray.getCurrentPos(res));
+                    color = color + Util::phongMode(&lights, &objects, obj, ray.getCurrentPos(res));
                     break;
                 case 1:
                     color = color + Util::foggyMode(ray, &objects, outside, bounces);
