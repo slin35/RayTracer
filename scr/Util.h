@@ -35,6 +35,7 @@ class Util {
     private:
         static bool inUnitSphere(vec3 pos);
         static vec3 getPointInUnitSphere();
+        static double Shlick(double cos_theta, double ior);
 };
 
 
@@ -123,7 +124,26 @@ Pigment Util::foggyMode(Ray ray, vector<shared_ptr<Object>>* objects, Pigment ba
         else if (obj->getSurfaceType() == 2) {    // emissive
             return obj->getColor();
         }
-        else if (obj->getSurfaceType() == 3) {
+        else if (obj->getSurfaceType() == 3) {  // refraction
+    
+            vec3 direction = ray.direction;
+            direction.normalize();
+            double cos_theta = (direction * -1).dot(normal);
+            double sin_theta = sqrt(1.0 - cos_theta * cos_theta);
+            double reflect = Shlick(cos_theta, obj->getIor());
+            double refractRatio = 1.0 / obj->getIor();
+
+            if (refractRatio * sin_theta > 1.0 || reflect > randD()) {  // total internal reflection && Fresnel
+                vec3 R = direction - normal * direction.dot(normal) * 2;
+                scatterRay = Ray(position, R + s * reflect);
+            }
+            else {
+                vec3 r_perp = (direction + normal * cos_theta) * refractRatio;
+                vec3 r_par = normal * (-1.0 * sqrt(fabs(1.0 - pow(r_perp.leng(), 2))));
+                vec3 refraction = r_perp + r_par;
+
+                scatterRay = Ray(position, refraction);
+            }
             
         }
 
@@ -150,4 +170,10 @@ vec3 Util::getPointInUnitSphere() {
         s = vec3(Util::randD(-0.5) * 2, Util::randD(-0.5) * 2, Util::randD(-0.5) * 2);
     }  while (!inUnitSphere(s));
     return s;
+}
+
+double Util::Shlick(double cos_theta, double ior) {
+    double r0 = (1.0 - ior) / (1.0 + ior);
+    r0 *= r0;
+    return r0 + (1.0 - r0) * pow((1 - cos_theta), 5);
 }

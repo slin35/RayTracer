@@ -46,7 +46,7 @@ class Sphere : public Object {
     private:
         vec3 center;
         double radius = 0;
-        Pigment pigment{0.0f, 0.0f, 0.0f};
+        Pigment pigment{1.0f, 1.0f, 1.0f};
         double fuzzy = 0;
         int type = 0;
         double ior;
