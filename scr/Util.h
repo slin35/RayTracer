@@ -123,6 +123,9 @@ Pigment Util::foggyMode(Ray ray, vector<shared_ptr<Object>>* objects, Pigment ba
         else if (obj->getSurfaceType() == 2) {    // emissive
             return obj->getColor();
         }
+        else if (obj->getSurfaceType() == 3) {
+            
+        }
 
         return obj->getColor() * foggyMode(scatterRay, objects, background, bounces - 1);
     }

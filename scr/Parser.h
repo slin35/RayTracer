@@ -135,6 +135,13 @@ class Parser {
                         }
                     }
                 }
+                else if (w.compare("finish") == 0) {
+                    input >> c;
+                    input >> w;
+                    if (w.compare("ior") == 0) {
+                        sphere->setIor(extractDouble(w));
+                    }
+                }
 
                 input >> w;
                 if (w.compare(END) == 0) {
@@ -145,6 +152,9 @@ class Parser {
                     input >> w;
                     if (w.compare("reflection") == 0) {
                         sphere->setFuzzy(extractDouble(w));
+                    }
+                    else if (w.compare("ior") == 0) {
+                        sphere->setIor(extractDouble(w));
                     }
                 }
 
@@ -243,6 +253,13 @@ class Parser {
                     }
                     
                 }
+                else if (w.compare("finish") == 0) {
+                    input >> c;
+                    input >> w;
+                    if (w.compare("ior") == 0) {
+                        plane->setIor(extractDouble(w));
+                    }
+                }
 
                 input >> w;
                 if (w.compare("}") == 0) {
@@ -253,6 +270,9 @@ class Parser {
                     input >> w;
                     if (w.compare("reflection") == 0) {
                         plane->setFuzzy(extractDouble(w));
+                    }
+                    else if (w.compare("ior") == 0) {
+                        plane->setIor(extractDouble(w));
                     }
                 }
             }

@@ -23,11 +23,17 @@ class Plane : public Object {
             this->fuzzy = fuzzy; 
             this->type = 1;
         }
+        void setIor(double ior) {
+            this->ior = ior;
+            this->type = 3;
+        }
+
         virtual double hit(Ray ray);
         virtual Pigment getColor() { return pigment; }
         virtual vec3 getN(vec3 curPos = vec3(0, 0, 0));
         virtual int getSurfaceType() { return type; }
         virtual double getFuzzy() { return fuzzy; };
+        virtual double getIor() { return ior; }
 
     private:
         vec3 normal;
@@ -35,6 +41,7 @@ class Plane : public Object {
         Pigment pigment;
         double fuzzy = 0;
         int type = 0;
+        double ior = 0;
 
 };
 

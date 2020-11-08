@@ -26,12 +26,17 @@ class Sphere : public Object {
             this->fuzzy = fuzzy; 
             this->type = 1;
         }
+        void setIor(double ior) {
+            this->ior = ior;
+            this->type = 3;
+        }
 
         vec3 getCenter() const { return center; }
         double getRadius() const { return radius; }
         Pigment getpigment() const { return pigment; }
 
         virtual double getFuzzy() { return fuzzy; }
+        virtual double getIor() { return ior; }
 
         virtual double hit(Ray ray);
         virtual Pigment getColor() { return pigment; }
@@ -44,6 +49,7 @@ class Sphere : public Object {
         Pigment pigment{0.0f, 0.0f, 0.0f};
         double fuzzy = 0;
         int type = 0;
+        double ior;
 
 };
 
