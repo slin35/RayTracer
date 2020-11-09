@@ -60,9 +60,9 @@ double Sphere::hit(Ray ray) {
     vec3 d = ray.direction;
     double r = radius;
 
-    double a = d.dot(d), b = 2 * d.dot(e - center), c = (e - center).dot(e - center) - r * r;
+    double a = d.dot(d), b = 2.0 * d.dot(e - center), c = (e - center).dot(e - center) - r * r;
     
-    double discriminant = b * b - 4 * a * c;
+    double discriminant = b * b - 4.0 * a * c;
 
     if (discriminant < 0)
         return -1;
@@ -74,29 +74,9 @@ double Sphere::hit(Ray ray) {
         if ((t1 > 0 && t2 < 0) || (t1 < 0 && t2 > 0))
             return max(t1, t2);
         return min(t1, t2);
-    /*    if (t1 > t2) {
-            double tmp = t1;
-            t1 = t2;
-            t2 = tmp;
-        }
-        if (t1 < 0) {
-            t1 = t2;
-            if (t1 < 0)
-                return -1;
-        }
-        return t1; */
-      
     }
 
-    t1 = max(t1, 0.0);
-    t2 = max(t2, 0.0);
-
     return min(t1, t2);
-
- /*   double t1 = max((-b + sqrt(discriminant))/2/a, 0.0);
-    double t2 = max((-b - sqrt(discriminant))/2/a, 0.0);
-
-    return min(t1, t2); */
 }
 
 vec3 Sphere::getN(vec3 curPos) {

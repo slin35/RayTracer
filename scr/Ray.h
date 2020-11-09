@@ -45,6 +45,7 @@ void Ray::setup(shared_ptr<Camera> camera, float xPos, float yPos, float width, 
 
     vec3 u = up.cross(w);
     vec3 v = w.cross(u);
+
     vec3 horizontal = u * right.leng();
     vec3 vertical = v * up.leng();
 

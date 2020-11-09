@@ -51,9 +51,11 @@ double Plane::hit(Ray ray) {
     vec3 dir = ray.direction;
 
     n.normalize();
-    dir.normalize();
-
-    return (distance - ray.position.dot(n)) / n.dot(ray.direction);
+    double deno = n.dot(dir);
+    if (deno != 0.0f)
+        return (distance - ray.position.dot(n)) / n.dot(dir);
+    
+    return -1;
 }
 
 vec3 Plane::getN(vec3 curPos) {

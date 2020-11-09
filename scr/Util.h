@@ -96,8 +96,6 @@ Pigment Util::foggyMode(Ray ray, vector<shared_ptr<Object>>* objects, Pigment ba
 
     res = hit.getClosestHit(obj);
 
-    
-
     if (hit.isHit()) {
         vec3 position = ray.getCurrentPos(res);
         vec3 normal = obj->getN(position);
@@ -131,19 +129,16 @@ Pigment Util::foggyMode(Ray ray, vector<shared_ptr<Object>>* objects, Pigment ba
             vec3 direction = ray.direction;
             direction.normalize();
 
-            double v = normal.dot(direction);
-
-            double cos_theta = (direction * -1).dot(normal);
-            
             double refractRatio = 1.0 / obj->getIor();
 
             if (direction.dot(normal) > 0) {    // ray's going out of medium
                 normal = normal * -1;
-                cos_theta = -cos_theta;
                 refractRatio = obj->getIor();
             }
             
+            double cos_theta = (direction * -1).dot(normal);
             double sin_theta = sqrt(1.0 - cos_theta * cos_theta);
+            
             double reflect = Shlick(cos_theta, obj->getIor());
 
             if (refractRatio * sin_theta > 1.0) {       // total internal reflection && Fresnel
@@ -189,5 +184,5 @@ vec3 Util::getPointInUnitSphere() {
 double Util::Shlick(double cos_theta, double ior) {
     double r0 = (1.0 - ior) / (1.0 + ior);
     r0 *= r0;
-    return r0 + (1.0 - r0) * pow((1 - cos_theta), 5);
+    return r0 + (1.0 - r0) * pow(1 - cos_theta, 5);
 }

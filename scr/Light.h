@@ -47,8 +47,6 @@ double Light::hit(Ray ray) {
     double t;
     vec3 curPos;
 
-    ray.direction.normalize();
-
     if (v1.x() == 0 && v2.x() == 0) {  // YZ plane
         t = (position.x() - ray.position.x()) / ray.direction.x();
 

@@ -22,3 +22,4 @@ plane {<0, 1, 0>, -2.5
 plane {<1, 1, 0>, -5
       pigment {color rgb <0.1, 0.1, 0.6>}
 }
+
