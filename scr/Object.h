@@ -15,6 +15,7 @@ class Object {
         virtual vec3 getN(vec3 curPos = vec3(0, 0, 0)) = 0;
         virtual int getSurfaceType() { return 0; }
         virtual double getIor() { return 0; }
+        virtual void setSurfaceType(int type) {};
 
 };
 

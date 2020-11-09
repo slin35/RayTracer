@@ -42,6 +42,7 @@ class Sphere : public Object {
         virtual Pigment getColor() { return pigment; }
         virtual vec3 getN(vec3 curPos = vec3(0, 0, 0));
         virtual int getSurfaceType() { return type; }
+        virtual void setSurfaceType(int type) { this->type = type; }
 
     private:
         vec3 center;
@@ -63,14 +64,39 @@ double Sphere::hit(Ray ray) {
     
     double discriminant = b * b - 4 * a * c;
 
-    
     if (discriminant < 0)
         return -1;
 
-    double t1 = max((-b + sqrt(discriminant))/2/a, 0.0);
-    double t2 = max((-b - sqrt(discriminant))/2/a, 0.0);
+    double t1 = (-b - sqrt(discriminant)) / (2.0 * a);
+    double t2 = (-b + sqrt(discriminant)) / (2.0 * a);
+
+    if (this->getSurfaceType() == 3) {
+        if ((t1 > 0 && t2 < 0) || (t1 < 0 && t2 > 0))
+            return max(t1, t2);
+        return min(t1, t2);
+    /*    if (t1 > t2) {
+            double tmp = t1;
+            t1 = t2;
+            t2 = tmp;
+        }
+        if (t1 < 0) {
+            t1 = t2;
+            if (t1 < 0)
+                return -1;
+        }
+        return t1; */
+      
+    }
+
+    t1 = max(t1, 0.0);
+    t2 = max(t2, 0.0);
 
     return min(t1, t2);
+
+ /*   double t1 = max((-b + sqrt(discriminant))/2/a, 0.0);
+    double t2 = max((-b - sqrt(discriminant))/2/a, 0.0);
+
+    return min(t1, t2); */
 }
 
 vec3 Sphere::getN(vec3 curPos) {

@@ -59,8 +59,6 @@ int main(int argc, char *argv[]) {
 
 			}
 			
-		//	cout << scene.planes[0]->getSurfaceType() << endl;
-
 			if (outFile) {
 				begin = std::chrono::high_resolution_clock::now();
 				scene.render(outFile);

@@ -90,13 +90,14 @@ void Scene::render(ostream& out) {
     if (lights.size() == 0 && renderMode == 0)
         renderMode = -1;
 
+
     #pragma omp parallel for num_threads(2)
     for (int y = height - 1; y >= 0; y--) {
         cerr << "\r rows remaining:  " << y << "            " << flush;
         for (int x = 0; x < width; x++) {
             buffer[x][y] = traceColor(x, y);
         }
-    }
+    } 
 
     renderBuffer(out);
 

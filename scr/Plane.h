@@ -57,5 +57,7 @@ double Plane::hit(Ray ray) {
 }
 
 vec3 Plane::getN(vec3 curPos) {
-    return normal;
+    vec3 n = normal;
+    n.normalize();
+    return n;
 }

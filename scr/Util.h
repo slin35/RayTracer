@@ -96,6 +96,8 @@ Pigment Util::foggyMode(Ray ray, vector<shared_ptr<Object>>* objects, Pigment ba
 
     res = hit.getClosestHit(obj);
 
+    
+
     if (hit.isHit()) {
         vec3 position = ray.getCurrentPos(res);
         vec3 normal = obj->getN(position);
@@ -117,6 +119,7 @@ Pigment Util::foggyMode(Ray ray, vector<shared_ptr<Object>>* objects, Pigment ba
                 direction.normalize();
 
                 vec3 R = direction - normal * direction.dot(normal) * 2;
+
                 scatterRay = Ray(position, R + s * obj->getFuzzy());
             
             }
@@ -125,17 +128,27 @@ Pigment Util::foggyMode(Ray ray, vector<shared_ptr<Object>>* objects, Pigment ba
             return obj->getColor();
         }
         else if (obj->getSurfaceType() == 3) {  // refraction
-    
             vec3 direction = ray.direction;
             direction.normalize();
+
+            double v = normal.dot(direction);
+
             double cos_theta = (direction * -1).dot(normal);
-            double sin_theta = sqrt(1.0 - cos_theta * cos_theta);
-            double reflect = Shlick(cos_theta, obj->getIor());
+            
             double refractRatio = 1.0 / obj->getIor();
 
-            if (refractRatio * sin_theta > 1.0 || reflect > randD()) {  // total internal reflection && Fresnel
+            if (direction.dot(normal) > 0) {    // ray's going out of medium
+                normal = normal * -1;
+                cos_theta = -cos_theta;
+                refractRatio = obj->getIor();
+            }
+            
+            double sin_theta = sqrt(1.0 - cos_theta * cos_theta);
+            double reflect = Shlick(cos_theta, obj->getIor());
+
+            if (refractRatio * sin_theta > 1.0) {       // total internal reflection && Fresnel
                 vec3 R = direction - normal * direction.dot(normal) * 2;
-                scatterRay = Ray(position, R + s * reflect);
+                scatterRay = Ray(position, R);
             }
             else {
                 vec3 r_perp = (direction + normal * cos_theta) * refractRatio;
@@ -166,6 +179,7 @@ void Util::gammaEncoder(Pigment& p, double gamma = 2.2) {
 
 vec3 Util::getPointInUnitSphere() {
     vec3 s;
+
     do {
         s = vec3(Util::randD(-0.5) * 2, Util::randD(-0.5) * 2, Util::randD(-0.5) * 2);
     }  while (!inUnitSphere(s));
