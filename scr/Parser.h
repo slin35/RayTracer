@@ -141,6 +141,24 @@ class Parser {
                     }
                     
                 }
+                else if (w.compare("scale") == 0) {
+                    tmp.setX(extractDouble(w));
+                    tmp.setY(extractDouble(w));
+                    tmp.setZ(extractDouble(w));
+                    sphere->setScale(tmp);
+                }
+                else if (w.compare("rotate") == 0) {
+                    tmp.setX(extractDouble(w));
+                    tmp.setY(extractDouble(w));
+                    tmp.setZ(extractDouble(w));
+                    sphere->setRotate(tmp);
+                }
+                else if (w.compare("translate") == 0) {
+                    tmp.setX(extractDouble(w));
+                    tmp.setY(extractDouble(w));
+                    tmp.setZ(extractDouble(w));
+                    sphere->setTranslate(tmp);
+                }
                 
             }
             scene.addSphere(sphere);

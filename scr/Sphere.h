@@ -30,6 +30,15 @@ class Sphere : public Object {
             this->ior = ior;
             this->type = 3;
         }
+        void setScale(vec3 scale) { 
+            this->scale = scale;
+        }
+        void setRotate(vec3 rotate) { 
+            this->rotate = rotate; 
+        }
+        void setTranslate(vec3 translate) { 
+            this->translate = translate; 
+        }
 
         vec3 getCenter() const { return center; }
         double getRadius() const { return radius; }
@@ -51,6 +60,9 @@ class Sphere : public Object {
         double fuzzy = 0;
         int type = 0;
         double ior;
+        vec3 scale;
+        vec3 rotate;
+        vec3 translate;
 
 };
 
