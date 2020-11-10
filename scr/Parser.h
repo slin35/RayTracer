@@ -107,20 +107,15 @@ class Parser {
             vec3 tmp;
             auto sphere = make_shared<Sphere>();
 
-            while (input >> w) {
-                if (w.compare(END) == 0) {
-                    break;
-                }
+            input >> w;
+            tmp.setX(extractDouble(w));
+            tmp.setY(extractDouble(w));
+            tmp.setZ(extractDouble(w));
 
-                tmp.setX(extractDouble(w));
-                tmp.setY(extractDouble(w));
-                tmp.setZ(extractDouble(w));
+            sphere->setCenter(tmp);
+            sphere->setRadius(extractDouble(w));
 
-                sphere->setCenter(tmp);
-                sphere->setRadius(extractDouble(w));
-
-                input >> w;
-                
+            while (input >> w && w.compare(END) != 0) {
                 if (w.compare("pigment") == 0) {
                     input >> w;
                     input >> w;
@@ -138,28 +133,14 @@ class Parser {
                 else if (w.compare("finish") == 0) {
                     input >> c;
                     input >> w;
-                    if (w.compare("ior") == 0) {
-                        sphere->setIor(extractDouble(w));
-                    }
-                }
-
-                input >> w;
-                if (w.compare(END) == 0) {
-                    break;
-                }
-                if (w.compare("finish") == 0) {
-                    input >> c;
-                    input >> w;
                     if (w.compare("reflection") == 0) {
                         sphere->setFuzzy(extractDouble(w));
                     }
                     else if (w.compare("ior") == 0) {
                         sphere->setIor(extractDouble(w));
                     }
+                    
                 }
-
-
-
                 
             }
             scene.addSphere(sphere);
