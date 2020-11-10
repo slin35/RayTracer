@@ -44,18 +44,18 @@ class Sphere : public Object {
         void setRotate(vec3 rotate) { 
             this->rotate = rotate;
             glm::vec3 axis(0.0f);
-            float angle = -1;
+            float angle;
             if (rotate.x() > 0) {
                 axis.x = 1;
-                angle *= rotate.x();
+                angle = rotate.x();
             }
             else if (rotate.y() > 0) {
                 axis.y = 1;
-                angle *= rotate.y();
+                angle = rotate.y();
             }
             else if (rotate.z() > 0) {
                 axis.z = 1;
-                angle *= rotate.z();
+                angle = rotate.z();
             }
             R = glm::rotate(glm::mat4(1.0f), angle, axis);
             ctm = R * ctm;
@@ -67,9 +67,9 @@ class Sphere : public Object {
         }
 
         void transCTM() {
-            ctm = glm::inverseTranspose(ctm);
-         //   ctm = glm::transpose(ctm);
-          //  ctm = glm::inverse(ctm);
+            invCTM = glm::inverse(ctm);
+            invTransCTM = glm::inverseTranspose(ctm);
+            transposeCTM = glm::transpose(ctm);
         }
 
         vec3 getCenter() const { return center; }
@@ -85,6 +85,7 @@ class Sphere : public Object {
         virtual int getSurfaceType() { return type; }
         virtual void setSurfaceType(int type) { this->type = type; }
 
+
     private:
         vec3 center;
         double radius = 0;
@@ -96,22 +97,26 @@ class Sphere : public Object {
         vec3 rotate;
         vec3 translate;
         glm::mat4 ctm = glm::mat4(1.0f);
+        glm::mat4 invCTM = glm::mat4(1.0f);
+        glm::mat4 invTransCTM = glm::mat4(1.0f);
+        glm::mat4 transposeCTM = glm::mat4(1.0f);
         glm::mat4 S;
         glm::mat4 R;
         glm::mat4 T;
-
+        
 };
+
+
 
 // returns the t value along the ray direction intersecting the sphere
 double Sphere::hit(Ray ray) {
+
     vec3 e = ray.position;
     vec3 d = ray.direction;
 
+    e = Util::applyCTM(e, invCTM, 1.0);
+    d = Util::applyCTM(d, invCTM, 0.0);
 
-    e = Util::applyCTM(e, ctm);
-    d = Util::applyCTM(d, ctm);
-
-    
     double r = radius;
 
     double a = d.dot(d);
@@ -135,10 +140,20 @@ double Sphere::hit(Ray ray) {
 }
 
 vec3 Sphere::getN(vec3 curPos) {
-    vec3 normal = curPos - center;
+    vec3 p = Util::applyCTM(curPos, invCTM, 1.0);
+    vec3 normal = p - center;
     normal.normalize();
 
-    normal = Util::applyCTM(normal, ctm);
+    normal = Util::applyCTM(normal, transposeCTM, 0.0);
     normal.normalize();
     return normal;
+
+/*    Sphere s = Sphere(center, radius, pigment);
+    s.flag = false;
+    vec3 pos = curRay.getCurrentPos(s.hit(curRay)) - center;
+    vec3 normal = pos - center;
+    normal.normalize();
+    normal = Util::applyCTM(normal, invTransCTM, 0.0);
+    normal.normalize();
+    return normal; */
 }

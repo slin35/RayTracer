@@ -33,7 +33,7 @@ class Util {
         static Pigment foggyMode(Ray ray, vector<shared_ptr<Object>>* objects, Pigment background, int bounces);
         static void gammaEncoder(Pigment& p, double gamma);
         static double detMatrix(glm::vec3 col1, glm::vec3 col2, glm::vec3 col3);
-        static vec3 applyCTM(vec3 v, glm::mat4 cmt);
+        static vec3 applyCTM(vec3 v, glm::mat4 cmt, float val);
 
     private:
         static bool inUnitSphere(vec3 pos);
@@ -194,7 +194,7 @@ double Util::Shlick(double cos_theta, double ior) {
 }
 
 
-vec3 Util::applyCTM(vec3 v, glm::mat4 cmt) {
-    glm::vec4 res = cmt * glm::vec4(v.x(), v.y(), v.z(), 1.0f);
+vec3 Util::applyCTM(vec3 v, glm::mat4 cmt, float val) {
+    glm::vec4 res = cmt * glm::vec4(v.x(), v.y(), v.z(), val);
     return vec3(res.x, res.y, res.z);
 }
