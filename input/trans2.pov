@@ -26,8 +26,8 @@ sphere { <0, 0, 0>, 2
 }
 
 sphere { <0, 0, 0>, 3.5
-  pigment { color rgb <1.0, 1.0, 1.0) }
-  finish { reflection 0.0 }
+  pigment { color rgb <1.0, 1.0, 1.0>}
+  finish {reflection 0.0}
   scale <2, 1, 1>
   rotate <0, 0, -45>
   translate <-4, 1, -1>

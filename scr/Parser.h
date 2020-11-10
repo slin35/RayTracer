@@ -161,6 +161,7 @@ class Parser {
                 }
                 
             }
+            sphere->transCTM();
             scene.addSphere(sphere);
         }
 

@@ -3,11 +3,17 @@
 #include <vector>
 #include <iostream> 
 #include <algorithm>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_inverse.hpp>
 
 
 #include "Pigment.h"
 #include "vec3.h"
 #include "Object.h"
+#include "Util.h"
 
 using namespace std;
 
@@ -32,12 +38,38 @@ class Sphere : public Object {
         }
         void setScale(vec3 scale) { 
             this->scale = scale;
+            S = glm::scale(glm::mat4(1.0f), glm::vec3(scale.x(), scale.y(), scale.z()));
+            ctm = S * ctm;
         }
         void setRotate(vec3 rotate) { 
-            this->rotate = rotate; 
+            this->rotate = rotate;
+            glm::vec3 axis(0.0f);
+            float angle = -1;
+            if (rotate.x() > 0) {
+                axis.x = 1;
+                angle *= rotate.x();
+            }
+            else if (rotate.y() > 0) {
+                axis.y = 1;
+                angle *= rotate.y();
+            }
+            else if (rotate.z() > 0) {
+                axis.z = 1;
+                angle *= rotate.z();
+            }
+            R = glm::rotate(glm::mat4(1.0f), angle, axis);
+            ctm = R * ctm;
         }
         void setTranslate(vec3 translate) { 
             this->translate = translate; 
+            T = glm::translate(glm::mat4(1.0f), glm::vec3(translate.x(), translate.y(), translate.z()));
+            ctm = T * ctm;
+        }
+
+        void transCTM() {
+            ctm = glm::inverseTranspose(ctm);
+         //   ctm = glm::transpose(ctm);
+          //  ctm = glm::inverse(ctm);
         }
 
         vec3 getCenter() const { return center; }
@@ -63,6 +95,10 @@ class Sphere : public Object {
         vec3 scale;
         vec3 rotate;
         vec3 translate;
+        glm::mat4 ctm = glm::mat4(1.0f);
+        glm::mat4 S;
+        glm::mat4 R;
+        glm::mat4 T;
 
 };
 
@@ -70,6 +106,12 @@ class Sphere : public Object {
 double Sphere::hit(Ray ray) {
     vec3 e = ray.position;
     vec3 d = ray.direction;
+
+
+    e = Util::applyCTM(e, ctm);
+    d = Util::applyCTM(d, ctm);
+
+    
     double r = radius;
 
     double a = d.dot(d);
@@ -94,6 +136,9 @@ double Sphere::hit(Ray ray) {
 
 vec3 Sphere::getN(vec3 curPos) {
     vec3 normal = curPos - center;
+    normal.normalize();
+
+    normal = Util::applyCTM(normal, ctm);
     normal.normalize();
     return normal;
 }

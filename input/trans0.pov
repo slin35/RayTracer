@@ -15,6 +15,6 @@ sphere { <0, 0, 0>, 2
 }
 
 plane {<0, 1, 0>, -5
-      pigment {color rgb <0.1, 0.1, 0.6>}
+      pigment { color rgb <0.1, 0.1, 0.6>}
 }
 

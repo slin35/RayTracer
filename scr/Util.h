@@ -6,6 +6,8 @@
 #include <limits>
 #include <math.h>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/transform.hpp>
 #include <iostream>
 
 #include "Pigment.h"
@@ -31,6 +33,7 @@ class Util {
         static Pigment foggyMode(Ray ray, vector<shared_ptr<Object>>* objects, Pigment background, int bounces);
         static void gammaEncoder(Pigment& p, double gamma);
         static double detMatrix(glm::vec3 col1, glm::vec3 col2, glm::vec3 col3);
+        static vec3 applyCTM(vec3 v, glm::mat4 cmt);
 
     private:
         static bool inUnitSphere(vec3 pos);
@@ -188,4 +191,10 @@ double Util::Shlick(double cos_theta, double ior) {
     double r0 = (1.0 - ior) / (1.0 + ior);
     r0 *= r0;
     return r0 + (1.0 - r0) * pow(1 - cos_theta, 5);
+}
+
+
+vec3 Util::applyCTM(vec3 v, glm::mat4 cmt) {
+    glm::vec4 res = cmt * glm::vec4(v.x(), v.y(), v.z(), 1.0f);
+    return vec3(res.x, res.y, res.z);
 }
