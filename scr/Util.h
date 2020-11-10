@@ -127,31 +127,34 @@ Pigment Util::foggyMode(Ray ray, vector<shared_ptr<Object>>* objects, Pigment ba
         }
         else if (obj->getSurfaceType() == 3) {  // refraction
             vec3 direction = ray.direction;
-            direction.normalize();
+            vec3 N = normal;
+            double ior = obj->getIor();
+            double refractRatio = 1.0 / ior;
 
-            double refractRatio = 1.0 / obj->getIor();
+            direction.normalize();
 
             if (direction.dot(normal) > 0) {    // ray's going out of medium
                 normal = normal * -1;
-                refractRatio = obj->getIor();
+                refractRatio = ior;
             }
-            
+      
             double cos_theta = (direction * -1).dot(normal);
-            double sin_theta = sqrt(1.0 - cos_theta * cos_theta);
-            
-            double reflect = Shlick(cos_theta, obj->getIor());
+            double sin_theta = sqrt(1.0 - cos_theta * cos_theta);            
+            double reflect = Shlick(cos_theta, ior);
 
-            if (refractRatio * sin_theta > 1.0) {       // total internal reflection && Fresnel
+        
+            if (reflect > randD() || refractRatio * sin_theta > 1.0) {       // total internal reflection && Fresnel
                 vec3 R = direction - normal * direction.dot(normal) * 2;
-                scatterRay = Ray(position, R);
+                R.normalize();
+                scatterRay = Ray(position + R * 0.005, R);
             }
             else {
                 vec3 r_perp = (direction + normal * cos_theta) * refractRatio;
                 vec3 r_par = normal * (-1.0 * sqrt(fabs(1.0 - pow(r_perp.leng(), 2))));
                 vec3 refraction = r_perp + r_par;
-
-                scatterRay = Ray(position, refraction);
-            }
+                refraction.normalize();
+                scatterRay = Ray(position + refraction * 0.005, refraction);
+           }
             
         }
 

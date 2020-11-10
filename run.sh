@@ -5,7 +5,7 @@ cd build
 cmake ../
 make
 mkdir -p ../output
-./raytrace 640 480 ../input/p3_e4.pov ../output/out.ppm 1 20 50
+./raytrace 640 480 ../input/p4_r2-1.pov ../output/out.ppm 1 20 50
 
 # for Mac OSX
 if [[ "$OSTYPE" == "darwin"* ]]; then

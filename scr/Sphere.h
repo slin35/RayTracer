@@ -60,7 +60,9 @@ double Sphere::hit(Ray ray) {
     vec3 d = ray.direction;
     double r = radius;
 
-    double a = d.dot(d), b = 2.0 * d.dot(e - center), c = (e - center).dot(e - center) - r * r;
+    double a = d.dot(d);
+    double b = 2.0 * d.dot(e - center);
+    double c = (e - center).dot(e - center) - r * r;
     
     double discriminant = b * b - 4.0 * a * c;
 
@@ -72,8 +74,7 @@ double Sphere::hit(Ray ray) {
 
     if (this->getSurfaceType() == 3) {
         if ((t1 > 0 && t2 < 0) || (t1 < 0 && t2 > 0))
-            return max(t1, t2);
-        return min(t1, t2);
+            return max(t1, t2); 
     }
 
     return min(t1, t2);
