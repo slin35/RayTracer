@@ -17,7 +17,7 @@ using namespace std;
 
 int main(int argc, char *argv[]) {
 	int width, height, shadingModel, numRays, bounces;
-	string objFile;
+	string objFile = "";
 	ifstream inFile;
 	ofstream outFile;
 
@@ -43,11 +43,6 @@ int main(int argc, char *argv[]) {
 			
 			Parser p(inFile, scene);
 
-			auto end = std::chrono::high_resolution_clock::now();
-  			auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
-			if (DEBUG)
-				cout << "parsing time " << elapsed.count() * 1e-9 << endl;
-
 			if (argc == 9) {
 				objFile = argv[8];
 				shared_ptr<Shape> shape = make_shared<Shape>(objFile);
@@ -58,7 +53,15 @@ int main(int argc, char *argv[]) {
 				}
 
 			}
-			
+
+			p.parse();
+
+			auto end = std::chrono::high_resolution_clock::now();
+  			auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
+			if (DEBUG)
+				cout << "parsing time " << elapsed.count() * 1e-9 << endl;
+
+
 			if (outFile) {
 				begin = std::chrono::high_resolution_clock::now();
 				scene.render(outFile);

@@ -5,6 +5,11 @@
 #include <string>
 #include <limits>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_inverse.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "tiny_obj_loader.h"
@@ -20,6 +25,8 @@ using namespace std;
 
 class Shape : public Object {
     public:
+        Shape() {}
+
         Shape(string inputFile) {
             if (!tinyobj::LoadObj(TOshapes, objMaterials, err, inputFile.c_str())) {
                 throw runtime_error(err);
@@ -45,17 +52,61 @@ class Shape : public Object {
         float tmax = 0;
         vec3 hitNormal;
         
+        Pigment color{0.6, 0.6, 0.8};
+        glm::mat4 ctm = glm::mat4(1.0f);
+        glm::mat4 invCTM = glm::mat4(1.0f);
+        glm::mat4 invTransCTM = glm::mat4(1.0f);
+        glm::mat4 transposeCTM = glm::mat4(1.0f);
+        glm::mat4 S;
+        glm::mat4 T;
+        glm::mat4 R;
 
         void initShape(int shapeIdx);
         void measure();
         void resize(glm::vec3 gTrans, float gScale);
+
+        void setColor(vec3 color) {
+            this->color = Pigment(color);
+        }
+        void setScale(vec3 scale) {
+            S = glm::scale(glm::mat4(1.0f), glm::vec3(scale.x(), scale.y(), scale.z()));
+            ctm = S * ctm;
+        }
+        void setTranslate(vec3 translate) {
+            T = glm::translate(glm::mat4(1.0f), glm::vec3(translate.x(), translate.y(), translate.z()));
+            ctm = T * ctm;
+        }
+        void setRotate(vec3 rotate) {
+            glm::vec3 axis(0.0f);
+            float angle = 0.0f;
+            if (rotate.x() != 0) {
+                axis.x = 1.0;
+                angle = rotate.x();
+            }
+            else if (rotate.y() != 0) {
+                axis.y = 1.0;
+                angle = rotate.y();
+            }
+            else if (rotate.z() != 0) {
+                axis.z = 1.0;
+                angle = rotate.z();
+            }
+            angle = (float)angle / 180.0 * 3.14;
+            R = glm::rotate(glm::mat4(1.0f), angle, axis);
+            ctm = R * ctm;
+        }
+        void transCTM() {
+            invCTM = glm::inverse(ctm);
+            invTransCTM = glm::inverseTranspose(ctm);
+            transposeCTM = glm::transpose(ctm);
+        }
 
 
         bool hitBoundingBox(Ray ray);
         void addTriangles();
 
         virtual double hit(Ray ray);
-        virtual Pigment getColor() { return Pigment(0.6, 0.6, 0.8); }
+        virtual Pigment getColor() { return this->color; }
         virtual vec3 getN(vec3 curPos = vec3(0, 0, 0));
 
 };

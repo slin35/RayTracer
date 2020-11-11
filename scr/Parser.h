@@ -12,6 +12,7 @@
 #include "Camera.h"
 #include "Sphere.h"
 #include "Scene.h"
+#include "Shape.h"
 
 using namespace std;
 
@@ -19,6 +20,7 @@ using namespace std;
 #define SPHERE "sphere"
 #define LIGHTSOURCE "light_source"
 #define PLANE "plane"
+#define OBJ "obj"
 #define START "{"
 #define END "}"
 
@@ -26,13 +28,8 @@ using namespace std;
 class Parser {
  
     public:
-        Parser(istream& input, Scene& scene) : input(input), scene(scene) {
-            parse();
-        }
+        Parser(istream& input, Scene& scene) : input(input), scene(scene) {}
 
-    private:
-        istream& input;
-        Scene& scene;
 
         void parse() {
             string w;
@@ -50,8 +47,17 @@ class Parser {
                 if (w.compare(PLANE) == 0) {
                     parsePlane();
                 }
+                if (w.compare(OBJ) == 0) {
+                    parseObj();
+                }
             }
         }
+
+    private:
+        istream& input;
+        Scene& scene;
+
+        
 
         // parse camera data and add to list of cameras in the scene
         void parseCamera() {
@@ -277,6 +283,51 @@ class Parser {
                 }
             }
             scene.addPlane(plane);
+        }
+
+        void parseObj() {
+            string w;
+            char c;
+            vec3 tmp;
+
+            while (input >> w && w.compare(END) != 0) {
+                if (w.compare("pigment") == 0) {
+                    input >> c;
+                    input >> w;
+                    if (w.compare("color") == 0) {
+                        input >> w;
+                        if (w.compare("rgb") == 0) {
+                            tmp.setX(extractDouble(w));
+                            tmp.setY(extractDouble(w));
+                            tmp.setZ(extractDouble(w));
+                        }
+
+                        scene.shapes[0]->setColor(tmp);
+                    }
+                }
+                else if (w.compare("scale") == 0) {
+                    tmp.setX(extractDouble(w));
+                    tmp.setY(extractDouble(w));
+                    tmp.setZ(extractDouble(w));
+                    scene.shapes[0]->setScale(tmp);
+                }
+                else if (w.compare("rotate") == 0) {
+                    tmp.setX(extractDouble(w));
+                    tmp.setY(extractDouble(w));
+                    tmp.setZ(extractDouble(w));
+                    scene.shapes[0]->setRotate(tmp);
+                }
+                else if (w.compare("translate") == 0) {
+                    tmp.setX(extractDouble(w));
+                    tmp.setY(extractDouble(w));
+                    tmp.setZ(extractDouble(w));
+                    scene.shapes[0]->setTranslate(tmp);
+                }
+            }
+            
+        
+            
+            scene.shapes[0]->transCTM();
         }
 
         // extracting integers of decimals from a srting
