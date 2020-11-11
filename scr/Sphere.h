@@ -15,6 +15,7 @@
 #include "vec3.h"
 #include "Object.h"
 #include "Util.h"
+#include "Texture.h"
 
 using namespace std;
 
@@ -74,7 +75,8 @@ class Sphere : public Object {
             transposeCTM = glm::transpose(ctm);
         }
         void setTextureImg(string img) {
-            this->img = img;
+            texture = Texture(img);
+            applyTexture = true;
         }
 
         vec3 getCenter() const { return center; }
@@ -108,7 +110,8 @@ class Sphere : public Object {
         glm::mat4 S = glm::mat4(1.0f);
         glm::mat4 R = glm::mat4(1.0f);
         glm::mat4 T = glm::mat4(1.0f);
-        string img;
+        Texture texture;
+        bool applyTexture = false;
         
 };
 
@@ -151,5 +154,15 @@ vec3 Sphere::getN(vec3 curPos) {
 
     normal = Util::applyCTM(normal, invTransCTM, 0.0);
     normal.normalize();
+
+    if (applyTexture) {
+        double tu = asin(normal.x()) / 3.14159 + 0.5;
+        double tv = asin(normal.y()) / 3.14159 + 0.5;
+        int x = texture.width * tu;
+        int y = texture.height * tv;
+        int idx = floor(texture.numComp * (y * texture.width + x));
+        this->pigment = Pigment(texture.data[idx]/255.0, texture.data[idx + 1]/255.0, texture.data[idx + 2]/255.0);
+    }
+
     return normal;
 }

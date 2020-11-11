@@ -12,9 +12,14 @@ light_source {
     area_light <8, 0, 0>, <0, 0, 8>
   }
 
+light_source {
+    <-6, -4, -4>
+    color rgb <2.0, 2.0, 4.0>
+    area_light <0, 16, 0>, <0, 0, 4>
+}
 
 sphere { <0, 0, -1>, 2.5
-  pigment { image_map {png "Eggs.png"} }
+  pigment { image_map {bmp "../imgs/brick.bmp"} }
 }
 
 

@@ -139,11 +139,10 @@ class Parser {
                         input >> c;
                         input >> w;
 
-                        if (w.compare("png") == 0) {
-                            string img = extractImg(w);
-                            img.erase(remove(img.begin(), img.end(), '\"'), img.end());
-                            sphere->setTextureImg(img);
-                        }
+                        string img = extractImg(w);
+                        img.erase(remove(img.begin(), img.end(), '\"'), img.end());
+                        sphere->setTextureImg(img);
+                        
                         input >> w;
                     }
                 }
