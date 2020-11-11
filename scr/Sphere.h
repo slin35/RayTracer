@@ -8,6 +8,7 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_inverse.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 
 #include "Pigment.h"
@@ -44,19 +45,20 @@ class Sphere : public Object {
         void setRotate(vec3 rotate) { 
             this->rotate = rotate;
             glm::vec3 axis(0.0f);
-            float angle;
-            if (rotate.x() > 0) {
-                axis.x = 1;
+            float angle = 0.0f;
+            if (rotate.x() != 0) {
+                axis.x = 1.0;
                 angle = rotate.x();
             }
-            else if (rotate.y() > 0) {
-                axis.y = 1;
+            else if (rotate.y() != 0) {
+                axis.y = 1.0;
                 angle = rotate.y();
             }
-            else if (rotate.z() > 0) {
-                axis.z = 1;
+            else if (rotate.z() != 0) {
+                axis.z = 1.0;
                 angle = rotate.z();
             }
+            angle = (float)angle / 180.0 * 3.14;
             R = glm::rotate(glm::mat4(1.0f), angle, axis);
             ctm = R * ctm;
         }
@@ -100,9 +102,9 @@ class Sphere : public Object {
         glm::mat4 invCTM = glm::mat4(1.0f);
         glm::mat4 invTransCTM = glm::mat4(1.0f);
         glm::mat4 transposeCTM = glm::mat4(1.0f);
-        glm::mat4 S;
-        glm::mat4 R;
-        glm::mat4 T;
+        glm::mat4 S = glm::mat4(1.0f);
+        glm::mat4 R = glm::mat4(1.0f);
+        glm::mat4 T = glm::mat4(1.0f);
         
 };
 
@@ -110,7 +112,6 @@ class Sphere : public Object {
 
 // returns the t value along the ray direction intersecting the sphere
 double Sphere::hit(Ray ray) {
-
     vec3 e = ray.position;
     vec3 d = ray.direction;
 
@@ -144,16 +145,7 @@ vec3 Sphere::getN(vec3 curPos) {
     vec3 normal = p - center;
     normal.normalize();
 
-    normal = Util::applyCTM(normal, transposeCTM, 0.0);
-    normal.normalize();
-    return normal;
-
-/*    Sphere s = Sphere(center, radius, pigment);
-    s.flag = false;
-    vec3 pos = curRay.getCurrentPos(s.hit(curRay)) - center;
-    vec3 normal = pos - center;
-    normal.normalize();
     normal = Util::applyCTM(normal, invTransCTM, 0.0);
     normal.normalize();
-    return normal; */
+    return normal;
 }

@@ -162,6 +162,7 @@ Pigment Util::foggyMode(Ray ray, vector<shared_ptr<Object>>* objects, Pigment ba
         }
 
         return obj->getColor() * foggyMode(scatterRay, objects, background, bounces - 1);
+
     }
     return background;
 }
