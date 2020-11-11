@@ -233,17 +233,15 @@ class Parser {
             vec3 tmp;
             auto plane = make_shared<Plane>();
 
-            while (input >> c && c != '}') {
-                if (c == '{') {
-                    tmp.setX(extractDouble(w));
-                    tmp.setY(extractDouble(w));
-                    tmp.setZ(extractDouble(w));
+            input >> c;
+            tmp.setX(extractDouble(w));
+            tmp.setY(extractDouble(w));
+            tmp.setZ(extractDouble(w));
 
-                    plane->setNormal(tmp);
-                    plane->setDistance(extractDouble(w));
-                }
+            plane->setNormal(tmp);
+            plane->setDistance(extractDouble(w));
 
-                input >> w;
+            while (input >> w && w.compare("END") != 0) {
                 if (w.compare("pigment") == 0) {
                     input >> c;
                     input >> w;
@@ -258,18 +256,6 @@ class Parser {
                         }
                     }
                     
-                }
-                else if (w.compare("finish") == 0) {
-                    input >> c;
-                    input >> w;
-                    if (w.compare("ior") == 0) {
-                        plane->setIor(extractDouble(w));
-                    }
-                }
-
-                input >> w;
-                if (w.compare("}") == 0) {
-                    break;
                 }
                 else if (w.compare("finish") == 0) {
                     input >> c;
