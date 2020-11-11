@@ -135,6 +135,9 @@ class Parser {
                             sphere->setPigment(tmp);
                         }
                     }
+                    else if (w.compare("image_map") == 0) {
+
+                    }
                 }
                 else if (w.compare("finish") == 0) {
                     input >> c;
@@ -241,7 +244,7 @@ class Parser {
             plane->setNormal(tmp);
             plane->setDistance(extractDouble(w));
 
-            while (input >> w && w.compare("END") != 0) {
+            while (input >> w && w.compare(END) != 0) {
                 if (w.compare("pigment") == 0) {
                     input >> c;
                     input >> w;
