@@ -136,7 +136,15 @@ class Parser {
                         }
                     }
                     else if (w.compare("image_map") == 0) {
+                        input >> c;
+                        input >> w;
 
+                        if (w.compare("png") == 0) {
+                            string img = extractImg(w);
+                            img.erase(remove(img.begin(), img.end(), '\"'), img.end());
+                            sphere->setTextureImg(img);
+                        }
+                        input >> w;
                     }
                 }
                 else if (w.compare("finish") == 0) {
@@ -330,6 +338,17 @@ class Parser {
             }
 
             return -1;
+        }
+
+        string extractImg(string& w) {
+            regex target("\"(.)*\"");
+            string res = "";
+            smatch match;
+            input >> w;
+            if (regex_search(w, match, target)) {
+                res = match.str();
+            }
+            return res;
         }
 
 };

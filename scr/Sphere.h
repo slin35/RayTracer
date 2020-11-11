@@ -73,6 +73,9 @@ class Sphere : public Object {
             invTransCTM = glm::inverseTranspose(ctm);
             transposeCTM = glm::transpose(ctm);
         }
+        void setTextureImg(string img) {
+            this->img = img;
+        }
 
         vec3 getCenter() const { return center; }
         double getRadius() const { return radius; }
@@ -105,6 +108,7 @@ class Sphere : public Object {
         glm::mat4 S = glm::mat4(1.0f);
         glm::mat4 R = glm::mat4(1.0f);
         glm::mat4 T = glm::mat4(1.0f);
+        string img;
         
 };
 
