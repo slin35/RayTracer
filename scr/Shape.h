@@ -99,6 +99,9 @@ class Shape : public Object {
             invCTM = glm::inverse(ctm);
             invTransCTM = glm::inverseTranspose(ctm);
             transposeCTM = glm::transpose(ctm);
+            for (auto tri : triangles) {
+                tri->setCTM(ctm);
+            }
         }
 
 
@@ -132,6 +135,9 @@ vec3 Shape::getN(vec3 curPos) {
 }
 
 bool Shape::hitBoundingBox(Ray ray) {
+    ray.position = Util::applyCTM(ray.position, invCTM, 1.0f);
+    ray.direction = Util::applyCTM(ray.direction, invCTM, 0.0f);
+    
     glm::vec3 dir = glm::vec3(ray.direction.x(), ray.direction.y(), ray.direction.z());
     glm::vec3 eye = glm::vec3(ray.position.x(), ray.position.y(), ray.position.z());
     glm::vec3 invDir = glm::vec3(1.0/dir.x, 1.0/dir.y, 1.0/dir.z);

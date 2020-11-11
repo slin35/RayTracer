@@ -34,17 +34,33 @@ class Triangle : public Object {
         glm::vec3 min;
         glm::vec3 max;
 
+        glm::mat4 ctm = glm::mat4(1.0f);
+        glm::mat4 invCTM = glm::mat4(1.0f);
+        glm::mat4 invTransCTM = glm::mat4(1.0f);
+        glm::mat4 transposeCTM = glm::mat4(1.0f);
+
         virtual double hit(Ray ray);
         virtual Pigment getColor() { return Pigment(0.6, 0.6, 0.8); }
         virtual vec3 getN(vec3 curPos = vec3(0, 0, 0));
 
+        void setCTM(glm::mat4 ctm) {
+            this->ctm = ctm;
+            invCTM = glm::inverse(ctm);
+            invTransCTM = glm::inverseTranspose(ctm);
+            transposeCTM = glm::transpose(ctm);
+        }
+
 };
 
 vec3 Triangle::getN(vec3 curPos) {
-    return vec3(normal.x, normal.y, normal.z);
+    vec3 N = Util::applyCTM(vec3(normal.x, normal.y, normal.z), invTransCTM, 0.0f);
+    return N;
 }
 
 double Triangle::hit(Ray ray) {
+    ray.position = Util::applyCTM(ray.position, invCTM, 1.0f);
+    ray.direction = Util::applyCTM(ray.direction, invCTM, 0.0f);
+
     glm::vec3 dir(ray.direction.x(), ray.direction.y(), ray.direction.z());
     glm::vec3 eye(ray.position.x(), ray.position.y(), ray.position.z());
 
