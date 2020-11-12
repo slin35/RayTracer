@@ -74,7 +74,7 @@ Pigment Util::phongMode(vector<shared_ptr<Light>>* lights, vector<shared_ptr<Obj
         res = o->inShadow(shadowFeeler, objects, o);
 
         if (res > 0) {
-            color = color + Pigment(0, 0, 0.02);
+            color = color + light->getColor() * o->getColor() * max(0, n.dot(l)) * 0.002;
         }
         else {
             color = color + o->getColor() * light->getPigment() * Util::phongDiffuse(1, n, l);
