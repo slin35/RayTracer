@@ -3,6 +3,7 @@
 #include "vec3.h"
 #include "Pigment.h"
 #include "Object.h"
+#include "Texture.h"
 
 class Plane : public Object {
     public:
@@ -27,6 +28,10 @@ class Plane : public Object {
             this->ior = ior;
             this->type = 3;
         }
+        void setTextureImg(string img) {
+            texture = Texture(img);
+            applyTexture = true;
+        }
 
         virtual double hit(Ray ray);
         virtual Pigment getColor() { return pigment; }
@@ -42,6 +47,8 @@ class Plane : public Object {
         double fuzzy = 0;
         int type = 0;
         double ior = 0;
+        Texture texture;
+        bool applyTexture = false;
 
 };
 

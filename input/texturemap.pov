@@ -24,7 +24,7 @@ sphere { <0, 0, -1>, 2.5
 
 
 plane {<0, 1, 0>, -2.5
-      pigment {color rgb <0.6, 0.1, 0.6>}
+      pigment { image_map {bmp "../imgs/brick.bmp"} }
 }
 
 plane {<1, 1, 0>, -5

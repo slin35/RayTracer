@@ -265,6 +265,16 @@ class Parser {
                             plane->setPigment(tmp);
                         }
                     }
+                    else if (w.compare("image_map") == 0) {
+                        input >> c;
+                        input >> w;
+
+                        string img = extractImg(w);
+                        img.erase(remove(img.begin(), img.end(), '\"'), img.end());
+                        plane->setTextureImg(img);
+
+                        input >> w;
+                    }
                     
                 }
                 else if (w.compare("finish") == 0) {
