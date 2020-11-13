@@ -156,8 +156,11 @@ vec3 Sphere::getN(vec3 curPos) {
     normal.normalize();
 
     if (applyTexture) {
-        double tu = asin(normal.x()) / 3.14159 + 0.5;
-        double tv = asin(normal.y()) / 3.14159 + 0.5;
+        vec3 N = p - center;
+        N.normalize();
+
+        double tu = asin(N.x()) / 3.14159 + 0.5;
+        double tv = asin(N.y()) / 3.14159 + 0.5;
         int x = texture.width * tu;
         int y = texture.height * tv;
         int idx = floor(texture.numComp * (y * texture.width + x));
