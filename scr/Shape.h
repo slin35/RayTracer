@@ -227,10 +227,8 @@ void Shape::addTriangles() {
         glm::vec3 v3(posBuf[3 * eleBuf[3 * idx + 2]], posBuf[3 * eleBuf[3 * idx + 2] + 1], posBuf[3 * eleBuf[3 * idx + 2] + 2]);
 
         auto triangle = make_shared<Triangle>(v1, v2, v3, min, max);
-
+        
         triangles.push_back(triangle);
-
-
     }
 }
 

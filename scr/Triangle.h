@@ -28,6 +28,7 @@ class Triangle : public Object {
         glm::vec3 c;
         glm::vec3 normal;
 
+
         float tmin;
         float tmax;
 

@@ -1,8 +1,17 @@
 implemented:
+phong diffuse with shadow
+foggy day diffuse
+anti-aliasing and gamma correction
+area lights
+reflections
+Axis-aligned bounding boxes
+multi-threading
 refraction with Schlicks
-geometric transformation (sphere && objs)
-texture mapping (sphere)
+geometric transformation
+texture mapping
 
-notes:
-    if testing with files that not included in the input folder, make sure texture images are passed in as a path to the current folder.
+supported shapes:
+spheres
+planes
+obj meshes
 
